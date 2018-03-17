@@ -19,7 +19,7 @@ Calculate hash from string, hex or file via AutoHotkey many options added.
 * HMAC
 
 ## Screenshot
-![Screenshot](LBS_HashCalc_1.jpg)
+![Screenshot](LBS_HashCalc_4.jpg)
 
 ## Contributing
 
