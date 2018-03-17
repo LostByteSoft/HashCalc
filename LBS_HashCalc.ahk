@@ -21,15 +21,16 @@
 	SetEnv, title, LBS_HashCalc
 	SetEnv, name, LBS_HashCalc
 	SetEnv, mode, Verify hash files Creator and load from external file
-	SetEnv, version, Version 2018-03-17-1202
+	SetEnv, version, Version 2018-03-17-1655
 	SetEnv, Author, LostByteSoft
 	SetEnv, icofolder, C:\Program Files\Common Files
 	SetEnv, logoicon, ico_hash.ico
 	;;SetEnv, love, chr(9829)
-	SetEnv, copyright, chr(169)
+	;;SetEnv, copyright, chr(169)
 	SetEnv, pause, 0
 	SetEnv, debug, 0
 	SetEnv, NoCalc, 1
+	SetEnv, NoIcons, 0
 
 	;; Specific Icons (or files)
 	FileInstall, ico_hash.ico, %icofolder%\ico_hash.ico, 0
@@ -47,40 +48,68 @@
 
 ;;--- Menu Tray options ---
 
+	IfNotExist, %icofolder%\ico_hash.ico, setenv, 0, noicons
+
 	Menu, Tray, NoStandard
 	Menu, tray, add, ---=== %title% ===---, about
+	IfEqual, noicons, 1, goto, skip1
 	Menu, Tray, Icon, ---=== %title% ===---, %icofolder%\%logoicon%
+	skip1:
 	Menu, tray, add, Show logo, GuiLogo
 	Menu, tray, add, Secret MsgBox, secret					; Secret MsgBox, just show all options and variables of the program.
+	IfEqual, noicons, 1, goto, skip2
 	Menu, Tray, Icon, Secret MsgBox, %icofolder%\ico_lock.ico
+	skip2:
 	Menu, tray, add, About && ReadMe, author
+	IfEqual, noicons, 1, goto, skip3
 	Menu, Tray, Icon, About && ReadMe, %icofolder%\ico_about.ico
+	skip3:
 	Menu, tray, add, Author %author%, about
 	menu, tray, disable, Author %author%
 	Menu, tray, add, %version%, about
 	menu, tray, disable, %version%
 	menu, tray, add, Show Gui, start					; Default gui
+	IfEqual, noicons, 1, goto, skip4
 	Menu, Tray, Icon, Show Gui, %icofolder%\ico_loupe.ico
+	skip4:
 	Menu, Tray, Default, Show Gui
 	Menu, Tray, Click, 1
 	Menu, tray, add,
 	Menu, tray, add, --== Control ==--, about
+	IfEqual, noicons, 1, goto, skip5
 	Menu, Tray, Icon, --== Control ==--, %icofolder%\ico_options.ico
+	skip5:
 	Menu, tray, add, Exit %title%, ExitApp					; Close exit program
+	IfEqual, noicons, 1, goto, skip6
 	Menu, Tray, Icon, Exit %title%, %icofolder%\ico_shut.ico
+	skip6:
 	Menu, tray, add, Refresh (Ini mod), doReload 				; Reload the script.
+	IfEqual, noicons, 1, goto, skip7
 	Menu, Tray, Icon, Refresh (Ini mod), %icofolder%\ico_reboot.ico
+	skip7:
 	Menu, tray, add, Set Debug (Toggle), debug
+	IfEqual, noicons, 1, goto, skip8
 	Menu, Tray, Icon, Set Debug (Toggle), %icofolder%\ico_debug.ico
+	skip8:
 	Menu, tray, add, Pause (Toggle), pause
+	IfEqual, noicons, 1, goto, skip9
 	Menu, Tray, Icon, Pause (Toggle), %icofolder%\ico_pause.ico
+	skip9:
 	Menu, tray, add, Open A_WorkingDir, A_WorkingDir
 	Menu, tray, add,
 	Menu, tray, add, --== Options ==--, about
+	IfEqual, noicons, 1, goto, skip10
 	Menu, Tray, Icon, --== Options ==--, %icofolder%\ico_options.ico
+	skip10:
+	Menu, tray, add, 1 - File, File
+	Menu, tray, add, 2 - Calculate, Calculate
+	Menu, tray, add, 3 - Load File, LoadFile
+	Menu, tray, add, 4 - Clear, Clear
 	menu, tray, add,
 	Menu, Tray, Tip, %mode%
+	IfEqual, noicons, 1, goto, skip11
 	Menu, Tray, Icon, %icofolder%\ico_hash.ico
+	skip11:
 
 ;;--- Software start here ---
 
@@ -90,106 +119,100 @@ start:
 
 	Gui, Destroy		;; some errors appears some times, needed
 
-Gui, Margin, 10, 10
-Gui, Font, s9, Courier New
+	Gui, Margin, 10, 10
+	Gui, Font, s9, Courier New
 
-Gui, Add, Text, x5 y5 w100 h15 , Data Format:
+	Gui, Add, Text, x5 y5 w100 h15 , Data Format:
 
-Gui, Add, Text, x115 y5 w390 h15 , Data:
-
-
-Gui, Add, DropDownList, x5 y26 w100 h23 , File
-Gui, Add, DropDownList, x5 y26 w100 h23 AltSubmit vDDL, Text String|Hex|File
-
-Gui, Add, Edit, x115 y26 w390 h23  vStr,
-Gui, Add, Button, x508 y26 w80 h23 gFile vFile, File
-
-Gui, Add, Checkbox, x5 y55 w100 h23 vCheck, HMAC
-Gui, Add, Edit, x115 y55 w390 h23 vHMAC,
-
-Gui, Add, Button, x598 y26 w185 h70 gCalculate, Calculate
+	Gui, Add, Text, x115 y5 w390 h15 , Data:
 
 
-Gui, Add, Checkbox, x5 y99 w100 h23 vCheckCRC32, CRC32
+	Gui, Add, DropDownList, x5 y26 AltSubmit vDDL, Text String|Hex|File
 
-Gui, Add, Edit, x115 y99 w390 h23 0x800 vCRC32, 
+	Gui, Add, Edit, x145 y26 w360 h23  vStr,
+	Gui, Add, Button, x508 y26 w80 h23 gFile vFile, File
 
-Gui, Add, Button, x508 y99 w80 h23 gCopyCRC32 vCopyCRC32, Copy
-Gui, Add, Button, x598 y99 w90 h23, CreateCRC32
-Gui, Add, Button, x688 y99 w90 h23, LoadCRC32
+	Gui, Add, Checkbox, x5 y55 w100 h23 vCheck, HMAC
+	Gui, Add, Edit, x115 y55 w390 h23 vHMAC,
 
-Gui, Add, Checkbox, x5 y128 w100 h23 vCheckMD2, MD2
-Gui, Add, Edit, x115 y128 w390 h23 0x800 vMD2, 
+	Gui, Add, Button, x598 y26 w180 h70 gCalculate, Calculate
 
-Gui, Add, Button, x508 y128 w80 h23 gCopyMD2 vCopyMD2, Copy
-Gui, Add, Button, x598 y128 w90 h23, CreateMD2
-Gui, Add, Button, x688 y128 w90 h23, LoadMD2
+	Gui, Add, Checkbox, x5 y99 w100 h23 vCheckCRC32, CRC32
 
-Gui, Add, Checkbox, x5 y157 w100 h23 vCheckMD4, MD4
-Gui, Add, Edit, x115 y157 w390 h23 0x800 vMD4,
-Gui, Add, Button, x508 y157 w80 h23 gCopyMD4 vCopyMD4, Copy
-Gui, Add, Button, x598 y157 w90 h23, CreateMD4
-Gui, Add, Button, x688 y157 w90 h23, LoadMD4
+	Gui, Add, Edit, x115 y99 w390 h23 0x800 vCRC32, 
 
-Gui, Add, Checkbox, x5 y186 w100 h23 Checked vCheckMD5, MD5
+	Gui, Add, Button, x508 y99 w80 h23 gCopyCRC32 vCopyCRC32, Copy
+	Gui, Add, Button, x598 y99 w90 h23, CreateCRC32
+	Gui, Add, Button, x688 y99 w90 h23, LoadCRC32
 
-Gui, Add, Edit, x115 y186 w390 h23 0x800 vMD5, 
+	Gui, Add, Checkbox, x5 y128 w100 h23 vCheckMD2, MD2
+	Gui, Add, Edit, x115 y128 w390 h23 0x800 vMD2, 
 
-Gui, Add, Button, x508 y186 w80 h23 gCopyMD5 vCopyMD5, Copy
-Gui, Add, Button, x598 y186 w90 h23, CreateMD5
-Gui, Add, Button, x688 y186 w90 h23, LoadMD5
+	Gui, Add, Button, x508 y128 w80 h23 gCopyMD2 vCopyMD2, Copy
+	Gui, Add, Button, x598 y128 w90 h23, CreateMD2
+	Gui, Add, Button, x688 y128 w90 h23, LoadMD2
 
-Gui, Add, Checkbox, x5 y215 w100 h23 Checked vCheckSHA, SHA-1
-Gui, Add, Edit, x115 y215 w390 h23 0x800 vSHA,
-Gui, Add, Button, x508 y215 w80 h23 gCopySHA vCopySHA, Copy
-Gui, Add, Button, x598 y215 w90 h23, CreateSHA1
-Gui, Add, Button, x688 y215 w90 h23, LoadSHA1
+	Gui, Add, Checkbox, x5 y157 w100 h23 vCheckMD4, MD4
+	Gui, Add, Edit, x115 y157 w390 h23 0x800 vMD4,
+	Gui, Add, Button, x508 y157 w80 h23 gCopyMD4 vCopyMD4, Copy
+	Gui, Add, Button, x598 y157 w90 h23, CreateMD4
+	Gui, Add, Button, x688 y157 w90 h23, LoadMD4
 
-Gui, Add, Checkbox, x5 y244 w100 h23 vCheckSHA2, SHA-256
-Gui, Add, Edit, x115 y244 w390 h23 0x800 vSHA2, 
+	Gui, Add, Checkbox, x5 y186 w100 h23 Checked vCheckMD5, MD5
 
-Gui, Add, Button, x508 y244 w80 h23 gCopySHA2 vCopySHA2, Copy
-Gui, Add, Button, x598 y244 w90 h23, CreateSHA256
-Gui, Add, Button, x688 y244 w90 h23, LoadSHA256
+	Gui, Add, Edit, x115 y186 w390 h23 0x800 vMD5, 
 
-Gui, Add, Checkbox, x5 y273 w100 h23 vCheckSHA3, SHA-384
-Gui, Add, Edit, x115 y273 w390 h23 vSHA3,
+	Gui, Add, Button, x508 y186 w80 h23 gCopyMD5 vCopyMD5, Copy
+	Gui, Add, Button, x598 y186 w90 h23, CreateMD5
+	Gui, Add, Button, x688 y186 w90 h23, LoadMD5
 
-Gui, Add, Button, x508 y273 w80 h23 gCopySHA3 vCopySHA3, Copy
-Gui, Add, Button, x598 y273 w90 h23, CreateSHA384
-Gui, Add, Button, x688 y273 w90 h23, LoadSHA384
+	Gui, Add, Checkbox, x5 y215 w100 h23 Checked vCheckSHA, SHA-1
+	Gui, Add, Edit, x115 y215 w390 h23 0x800 vSHA,
+	Gui, Add, Button, x508 y215 w80 h23 gCopySHA vCopySHA, Copy
+	Gui, Add, Button, x598 y215 w90 h23, CreateSHA1
+	Gui, Add, Button, x688 y215 w90 h23, LoadSHA1
 
-Gui, Add, Checkbox, x5 y302 w100 h23 vCheckSHA5, SHA-512
-Gui, Add, Edit, x115 y302 w390 h23 vSHA5,
+	Gui, Add, Checkbox, x5 y244 w100 h23 vCheckSHA2, SHA-256
+	Gui, Add, Edit, x115 y244 w390 h23 0x800 vSHA2, 
 
-Gui, Add, Button, x508 y302 w80 h23 gCopySHA5 vCopySHA5, Copy
-Gui, Add, Button, x598 y302 w90 h23, CreateSHA512
-Gui, Add, Button, x688 y302 w90 h23, LoadSHA512
+	Gui, Add, Button, x508 y244 w80 h23 gCopySHA2 vCopySHA2, Copy
+	Gui, Add, Button, x598 y244 w90 h23, CreateSHA256
+	Gui, Add, Button, x688 y244 w90 h23, LoadSHA256
 
+	Gui, Add, Checkbox, x5 y273 w100 h23 vCheckSHA3, SHA-384
+	Gui, Add, Edit, x115 y273 w390 h23 0x800 vSHA3,
 
+	Gui, Add, Button, x508 y273 w80 h23 gCopySHA3 vCopySHA3, Copy
+	Gui, Add, Button, x598 y273 w90 h23, CreateSHA384
+	Gui, Add, Button, x688 y273 w90 h23, LoadSHA384
 
-Gui, Add, Text, x5 y346 w100 h23 , Verify
+	Gui, Add, Checkbox, x5 y302 w100 h23 vCheckSHA5, SHA-512
+	Gui, Add, Edit, x115 y302 w390 h23 0x800 vSHA5,
 
-Gui, Add, Edit, x115 y346 w390 h23 vVerify,
-Gui, Add, Edit, x508 y346 w80 h23 0x800 vHashOK,
-;;Gui, Add, Text, x5 y379 w584 h2 0x10
+	Gui, Add, Button, x508 y302 w80 h23 gCopySHA5 vCopySHA5, Copy
+	Gui, Add, Button, x598 y302 w90 h23, CreateSHA512
+	Gui, Add, Button, x688 y302 w90 h23, LoadSHA512
 
+	Gui, Add, Text, x5 y346 w100 h23 , Verify
 
-Gui, Add, Text, x5 y390 w500 h21 , Made with AHK 2013-%A_YYYY%, jNizM
- and %author%
+	Gui, Add, Edit, x115 y346 w390 h23 vVerify,
+	Gui, Add, Edit, x508 y346 w80 h23 0x800 vHashOK,
 
+	Gui, Add, Button, x598 y346 w90 h23 gloadFile, LoadFile
+	Gui, Add, Button, x688 y346 w90 h23 gClear, Clear
+	Gui, Add, Button, x598 y384 w180 h23 gClose, Close
 
-Gui, Add, Button, x598 y346 w80 h23 gloadFile, LoadFile
-Gui, Add, Button, x508 y384 w80 h23 gClear, Clear
-Gui, Add, Button, x598 y384 w80 h23 gClose, Close
+	Gui, Add, Text, x5 y390 w500 h21 , Made with AHK 2013-%A_YYYY%, jNizM
+ and %author% %version%
+	Gui, Show, AutoSize, %title% %mode%
 
-Gui, Show, AutoSize, %name% %version%
 
 ;;--- Gui buttons & control ---
 
 SetTimer, CheckEdit, 100
 SetTimer, VerifyHash, 200
 return
+
 
 LoadFile:
 	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before loading a file !
@@ -942,7 +965,9 @@ Close:
 	ExitApp
 
 GuiLogo:
+	IfNotExist, %icofolder%\%logoicon%, goto, skiplogoicon
 	Gui, 4:Add, Picture, x25 y25 w400 h400, %icofolder%\%logoicon%
+	skiplogoicon:
 	Gui, 4:Show, w450 h450, %title% Logo
 	Gui, 4:Color, 000000
 	Gui, 4:-MinimizeBox
