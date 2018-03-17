@@ -1,5 +1,9 @@
 # HashCalc ORIGINAL by jNizM
-Calculate hash from string, hex or file via AutoHotkey
+Calculate hash from string, hex or file via AutoHotkey many options added.
+* create files (*.md5 *.sha1 ... etc)
+* load from file
+* gui arrangement
+* direct load hash files
 
 ## Features
 * Generate hash value from string, hex or file
