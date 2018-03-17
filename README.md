@@ -1,11 +1,11 @@
-# HashCalc by jNizM
+# HashCalc ORIGINAL by jNizM
 Calculate hash from string, hex or file via AutoHotkey
-
 
 ## Features
 * Generate hash value from string, hex or file
 * Secure-Salted function
 * Verify hash
+* Load md5 sha ... etc from a file
 
 ### Hash Functions
 * CRC32
@@ -15,27 +15,12 @@ Calculate hash from string, hex or file via AutoHotkey
 * HMAC
 
 ## Screenshot
-![Screenshot](Screenshot.png)
-
-
-## Info
-* Version: v0.9
-* URL: [AHK Thread](http://ahkscript.org/boards/viewtopic.php?f=6&t=87)
-
-
-## Changelog
-* 0.9 | Added hash function CRC32
-* 0.8 | Bug fixes and improvements
-* 0.7 | Added CalcHexHash()
-* 0.6 | Change Salt to HMAC funtion
-* 0.5 | Added Drag&Drop File into Gui
-* 0.4 | Changed Hash functions to CalcAddrHash(), CalcStringHash() & CalcFileHash()
-* 0.3 | Added Disable Salt if 'File' is active
-* 0.2 | Added HashFromFile(), Checkbox
-* 0.1 | First Release
-
+![Screenshot](LBS_HashCalc.jpg)
 
 ## Contributing
+
+* THANKS ORIGINAL MAKER jNizM
+
 * thanks to Bentschi for his functions CalcAddrHash(), CalcStringHash() & CalcFileHash()
 * thanks to atnbueno for CalcHexHash()
 * thanks to SKAN for his functions CRC() & FileCRC32()
