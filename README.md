@@ -24,7 +24,7 @@ Calculate hash from string, hex or file via AutoHotkey many options added.
 * HMAC
 
 ## Screenshot
-![Screenshot](LBS_HashCalc_4.jpg)
+![Screenshot](LBS_HashCalc_5.jpg)
 
 ## How to use it ?
 * Click "File" to load something (larges files takes time...)
