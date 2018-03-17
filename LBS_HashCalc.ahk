@@ -10,27 +10,26 @@
 ;;--- Softwares Variables ---
 
 	SetWorkingDir, %A_ScriptDir%
-	#SingleInstance Force
 	#Persistent
 	#Warn
 	#NoEnv
-	;; #NoTrayIcon
+
 	SetBatchLines, -1
 	SetTitleMatchMode, Slow
 	SetTitleMatchMode, 2
 
 	SetEnv, title, LBS_HashCalc
 	SetEnv, name, LBS_HashCalc
-	SetEnv, mode, Get and Verify hash files and load from external file
-	SetEnv, version, Version 2018-03-17-1014
+	SetEnv, mode, Verify hash files Creator and load from external file
+	SetEnv, version, Version 2018-03-17-1202
 	SetEnv, Author, LostByteSoft
 	SetEnv, icofolder, C:\Program Files\Common Files
 	SetEnv, logoicon, ico_hash.ico
-	SetEnv, love, chr(9829)
+	;;SetEnv, love, chr(9829)
 	SetEnv, copyright, chr(169)
 	SetEnv, pause, 0
 	SetEnv, debug, 0
-	SetEnv, NoCalc, 0
+	SetEnv, NoCalc, 1
 
 	;; Specific Icons (or files)
 	FileInstall, ico_hash.ico, %icofolder%\ico_hash.ico, 0
@@ -100,7 +99,7 @@ Gui, Add, Text, x115 y5 w390 h15 , Data:
 
 
 Gui, Add, DropDownList, x5 y26 w100 h23 , File
-Gui, Add, DropDownList, x5 y26 w100 h23 AltSubmit vDDL, Text String||Hex|File
+Gui, Add, DropDownList, x5 y26 w100 h23 AltSubmit vDDL, Text String|Hex|File
 
 Gui, Add, Edit, x115 y26 w390 h23  vStr,
 Gui, Add, Button, x508 y26 w80 h23 gFile vFile, File
@@ -108,68 +107,81 @@ Gui, Add, Button, x508 y26 w80 h23 gFile vFile, File
 Gui, Add, Checkbox, x5 y55 w100 h23 vCheck, HMAC
 Gui, Add, Edit, x115 y55 w390 h23 vHMAC,
 
-Gui, Add, Button, x508 y56 w80 h23 gCalculate, Calculate
+Gui, Add, Button, x598 y26 w185 h70 gCalculate, Calculate
 
-;;--- checksum ---
 
 Gui, Add, Checkbox, x5 y99 w100 h23 vCheckCRC32, CRC32
 
 Gui, Add, Edit, x115 y99 w390 h23 0x800 vCRC32, 
 
 Gui, Add, Button, x508 y99 w80 h23 gCopyCRC32 vCopyCRC32, Copy
+Gui, Add, Button, x598 y99 w90 h23, CreateCRC32
+Gui, Add, Button, x688 y99 w90 h23, LoadCRC32
 
 Gui, Add, Checkbox, x5 y128 w100 h23 vCheckMD2, MD2
 Gui, Add, Edit, x115 y128 w390 h23 0x800 vMD2, 
 
 Gui, Add, Button, x508 y128 w80 h23 gCopyMD2 vCopyMD2, Copy
+Gui, Add, Button, x598 y128 w90 h23, CreateMD2
+Gui, Add, Button, x688 y128 w90 h23, LoadMD2
 
 Gui, Add, Checkbox, x5 y157 w100 h23 vCheckMD4, MD4
 Gui, Add, Edit, x115 y157 w390 h23 0x800 vMD4,
 Gui, Add, Button, x508 y157 w80 h23 gCopyMD4 vCopyMD4, Copy
+Gui, Add, Button, x598 y157 w90 h23, CreateMD4
+Gui, Add, Button, x688 y157 w90 h23, LoadMD4
 
 Gui, Add, Checkbox, x5 y186 w100 h23 Checked vCheckMD5, MD5
 
 Gui, Add, Edit, x115 y186 w390 h23 0x800 vMD5, 
 
 Gui, Add, Button, x508 y186 w80 h23 gCopyMD5 vCopyMD5, Copy
+Gui, Add, Button, x598 y186 w90 h23, CreateMD5
+Gui, Add, Button, x688 y186 w90 h23, LoadMD5
 
 Gui, Add, Checkbox, x5 y215 w100 h23 Checked vCheckSHA, SHA-1
 Gui, Add, Edit, x115 y215 w390 h23 0x800 vSHA,
 Gui, Add, Button, x508 y215 w80 h23 gCopySHA vCopySHA, Copy
+Gui, Add, Button, x598 y215 w90 h23, CreateSHA1
+Gui, Add, Button, x688 y215 w90 h23, LoadSHA1
 
 Gui, Add, Checkbox, x5 y244 w100 h23 vCheckSHA2, SHA-256
 Gui, Add, Edit, x115 y244 w390 h23 0x800 vSHA2, 
 
 Gui, Add, Button, x508 y244 w80 h23 gCopySHA2 vCopySHA2, Copy
+Gui, Add, Button, x598 y244 w90 h23, CreateSHA256
+Gui, Add, Button, x688 y244 w90 h23, LoadSHA256
 
 Gui, Add, Checkbox, x5 y273 w100 h23 vCheckSHA3, SHA-384
 Gui, Add, Edit, x115 y273 w390 h23 vSHA3,
 
 Gui, Add, Button, x508 y273 w80 h23 gCopySHA3 vCopySHA3, Copy
+Gui, Add, Button, x598 y273 w90 h23, CreateSHA384
+Gui, Add, Button, x688 y273 w90 h23, LoadSHA384
 
 Gui, Add, Checkbox, x5 y302 w100 h23 vCheckSHA5, SHA-512
 Gui, Add, Edit, x115 y302 w390 h23 vSHA5,
 
 Gui, Add, Button, x508 y302 w80 h23 gCopySHA5 vCopySHA5, Copy
-Gui, Add, Text, x5 y335 w584 h2 0x10
+Gui, Add, Button, x598 y302 w90 h23, CreateSHA512
+Gui, Add, Button, x688 y302 w90 h23, LoadSHA512
 
-;;--- verification ---
+
 
 Gui, Add, Text, x5 y346 w100 h23 , Verify
 
 Gui, Add, Edit, x115 y346 w390 h23 vVerify,
 Gui, Add, Edit, x508 y346 w80 h23 0x800 vHashOK,
-Gui, Add, Text, x5 y379 w584 h2 0x10
-
-Gui, Font, cSilver,
-Gui, Add, Text, x5 y390 w300 h21 , made with %love% and AHK 2013-%A_YYYY%, jNizM
-
-Gui, Font,,
+;;Gui, Add, Text, x5 y379 w584 h2 0x10
 
 
-Gui, Add, Button, x338 y384 w80 h23 gload, Load
-Gui, Add, Button, x421 y384 w80 h23 gClear, Clear
-Gui, Add, Button, x504 y384 w80 h23 gClose, Close
+Gui, Add, Text, x5 y390 w500 h21 , Made with AHK 2013-%A_YYYY%, jNizM
+ and %author%
+
+
+Gui, Add, Button, x598 y346 w80 h23 gloadFile, LoadFile
+Gui, Add, Button, x508 y384 w80 h23 gClear, Clear
+Gui, Add, Button, x598 y384 w80 h23 gClose, Close
 
 Gui, Show, AutoSize, %name% %version%
 
@@ -179,12 +191,12 @@ SetTimer, CheckEdit, 100
 SetTimer, VerifyHash, 200
 return
 
-Load:
+LoadFile:
 	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before loading a file !
-	FileSelectFile, OutputVar,2 ,, Select a file to load... (ESC to quit) HashCalc, (*.crc32; *.md2; *.md4; *.md5; *.sha-1; sha-256; *.sha-384; *.sha-512)
+	IfEqual, NoCalc, 1, Goto, file
+	FileSelectFile, OutputVar,2 ,, Select a file to load... (ESC to quit) HashCalc, (*.crc32; *.md2; *.md4; *.md5; *.sha1; sha256; *.sha384; *.sha512)
 		if ErrorLevel
 			goto, Start
-
 	IfEqual, OutputVar, , Goto, start
 	Test := OutputVar
 	SplitPath, Test,, Dir
@@ -193,9 +205,7 @@ Load:
 	IfEqual, debug, 1, msgbox, BACK :`n`nOutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
 	FileReadLine, Loadhash, %OutputVar%, 1
 	IfEqual, debug, 1, msgbox, LoadFile=%OutputVar% LoadHash=%Loadhash%
-
 	GuiControl,,Verify, %Loadhash%
-
 return
 
 GuiDropFiles:
@@ -241,6 +251,7 @@ File:
 return
 
 Calculate:
+	SetEnv, NoCalc, 0
     Gui, Submit, NoHide
     GuiControl,, CRC32, % ((CheckCRC32 = "1") ? ((DDL = "1") ? ((Check = "0") ? (CRC32(Str))  : "")                          : ((DDL = "2") ? (HexCRC32(Str))  : (FileCRC32(Str))))  : (""))
     GuiControl,, MD2,   % ((CheckMD2   = "1") ? ((DDL = "1") ? ((Check = "0") ? (MD2(Str))    : (HMAC(HMAC, Str, "MD2")))    : ((DDL = "2") ? (HexMD2(Str))    : (FileMD2(Str))))    : (""))
@@ -307,7 +318,558 @@ return
 
 ;;--- Functions ---
 
-#include Include_Functions.ahk
+; FUNCTIONS =========================================================================
+
+
+;; THANKS TO jNizM/HashCalc
+;; https://github.com/jNizM/HashCalc
+
+
+; Verify ============================================================================
+Hashify(Hash, CRC32, MD2, MD4, MD5, SHA, SHA2, SHA3, SHA5)
+{
+    return % (Hash = "")    ? ""
+           : (Hash = CRC32) ? ("CRC32 OK")
+           : (Hash = MD2)   ? ("MD2 OK")
+           : (Hash = MD4)   ? ("MD4 OK")
+           : (Hash = MD5)   ? ("MD5 OK")
+           : (Hash = SHA)   ? ("SHA1 OK")
+           : (Hash = SHA2)  ? ("SHA256 OK")
+           : (Hash = SHA3)  ? ("SHA384 OK")
+           : (Hash = SHA5)  ? ("SHA512 OK")
+           : "FALSE"
+}
+
+; HMAC ==============================================================================
+HMAC(Key, Message, Algo := "MD5")
+{
+    static Algorithms := {MD2:    {ID: 0x8001, Size:  64}
+                        , MD4:    {ID: 0x8002, Size:  64}
+                        , MD5:    {ID: 0x8003, Size:  64}
+                        , SHA:    {ID: 0x8004, Size:  64}
+                        , SHA256: {ID: 0x800C, Size:  64}
+                        , SHA384: {ID: 0x800D, Size: 128}
+                        , SHA512: {ID: 0x800E, Size: 128}}
+    static iconst := 0x36
+    static oconst := 0x5C
+    if (!(Algorithms.HasKey(Algo)))
+    {
+        return ""
+    }
+    Hash := KeyHashLen := InnerHashLen := ""
+    HashLen := 0
+    AlgID := Algorithms[Algo].ID
+    BlockSize := Algorithms[Algo].Size
+    MsgLen := StrPut(Message, "UTF-8") - 1
+    KeyLen := StrPut(Key, "UTF-8") - 1
+    VarSetCapacity(K, KeyLen + 1, 0)
+    StrPut(Key, &K, KeyLen, "UTF-8")
+    if (KeyLen > BlockSize)
+    {
+        CalcAddrHash(&K, KeyLen, AlgID, KeyHash, KeyHashLen)
+    }
+
+    VarSetCapacity(ipad, BlockSize + MsgLen, iconst)
+    Addr := KeyLen > BlockSize ? &KeyHash : &K
+    Length := KeyLen > BlockSize ? KeyHashLen : KeyLen
+    i := 0
+    while (i < Length)
+    {
+        NumPut(NumGet(Addr + 0, i, "UChar") ^ iconst, ipad, i, "UChar")
+        i++
+    }
+    if (MsgLen)
+    {
+        StrPut(Message, &ipad + BlockSize, MsgLen, "UTF-8")
+    }
+    CalcAddrHash(&ipad, BlockSize + MsgLen, AlgID, InnerHash, InnerHashLen)
+
+    VarSetCapacity(opad, BlockSize + InnerHashLen, oconst)
+    Addr := KeyLen > BlockSize ? &KeyHash : &K
+    Length := KeyLen > BlockSize ? KeyHashLen : KeyLen
+    i := 0
+    while (i < Length)
+    {
+        NumPut(NumGet(Addr + 0, i, "UChar") ^ oconst, opad, i, "UChar")
+        i++
+    }
+    Addr := &opad + BlockSize
+    i := 0
+    while (i < InnerHashLen)
+    {
+        NumPut(NumGet(InnerHash, i, "UChar"), Addr + i, 0, "UChar")
+        i++
+    }
+    return CalcAddrHash(&opad, BlockSize + InnerHashLen, AlgID)
+}
+
+; MD2 ===============================================================================
+MD2(string, encoding = "UTF-8")
+{
+    return CalcStringHash(string, 0x8001, encoding)
+}
+HexMD2(hexstring)
+{
+    return CalcHexHash(hexstring, 0x8001)
+}
+FileMD2(filename)
+{
+    return CalcFileHash(filename, 0x8001, 64 * 1024)
+}
+; MD4 ===============================================================================
+MD4(string, encoding = "UTF-8")
+{
+    return CalcStringHash(string, 0x8002, encoding)
+}
+HexMD4(hexstring)
+{
+    return CalcHexHash(hexstring, 0x8002)
+}
+FileMD4(filename)
+{
+    return CalcFileHash(filename, 0x8002, 64 * 1024)
+}
+; MD5 ===============================================================================
+MD5(string, encoding = "UTF-8")
+{
+    return CalcStringHash(string, 0x8003, encoding)
+}
+HexMD5(hexstring)
+{
+    return CalcHexHash(hexstring, 0x8003)
+}
+FileMD5(filename)
+{
+    return CalcFileHash(filename, 0x8003, 64 * 1024)
+}
+; SHA ===============================================================================
+SHA(string, encoding = "UTF-8")
+{
+    return CalcStringHash(string, 0x8004, encoding)
+}
+HexSHA(hexstring)
+{
+    return CalcHexHash(hexstring, 0x8004)
+}
+FileSHA(filename)
+{
+    return CalcFileHash(filename, 0x8004, 64 * 1024)
+}
+; SHA256 ============================================================================
+SHA256(string, encoding = "UTF-8")
+{
+    return CalcStringHash(string, 0x800c, encoding)
+}
+HexSHA256(hexstring)
+{
+    return CalcHexHash(hexstring, 0x800c)
+}
+FileSHA256(filename)
+{
+    return CalcFileHash(filename, 0x800c, 64 * 1024)
+}
+; SHA384 ============================================================================
+SHA384(string, encoding = "UTF-8")
+{
+    return CalcStringHash(string, 0x800d, encoding)
+}
+HexSHA384(hexstring)
+{
+    return CalcHexHash(hexstring, 0x800d)
+}
+FileSHA384(filename)
+{
+    return CalcFileHash(filename, 0x800d, 64 * 1024)
+}
+; SHA512 ============================================================================
+SHA512(string, encoding = "UTF-8")
+{
+    return CalcStringHash(string, 0x800e, encoding)
+}
+HexSHA512(hexstring)
+{
+    return CalcHexHash(hexstring, 0x800e)
+}
+FileSHA512(filename)
+{
+    return CalcFileHash(filename, 0x800e, 64 * 1024)
+}
+
+; CalcAddrHash ======================================================================
+CalcAddrHash(addr, length, algid, byref hash = 0, byref hashlength = 0)
+{
+    static h := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, "a", "b", "c", "d", "e", "f"]
+    static b := h.minIndex()
+    hProv := hHash := o := ""
+    if (DllCall("advapi32\CryptAcquireContext", "Ptr*", hProv, "Ptr", 0, "Ptr", 0, "UInt", 24, "UInt", 0xf0000000))
+    {
+        if (DllCall("advapi32\CryptCreateHash", "Ptr", hProv, "UInt", algid, "UInt", 0, "UInt", 0, "Ptr*", hHash))
+        {
+            if (DllCall("advapi32\CryptHashData", "Ptr", hHash, "Ptr", addr, "UInt", length, "UInt", 0))
+            {
+                if (DllCall("advapi32\CryptGetHashParam", "Ptr", hHash, "UInt", 2, "Ptr", 0, "UInt*", hashlength, "UInt", 0))
+                {
+                    VarSetCapacity(hash, hashlength, 0)
+                    if (DllCall("advapi32\CryptGetHashParam", "Ptr", hHash, "UInt", 2, "Ptr", &hash, "UInt*", hashlength, "UInt", 0))
+                    {
+                        loop % hashlength
+                        {
+                            v := NumGet(hash, A_Index - 1, "UChar")
+                            o .= h[(v >> 4) + b] h[(v & 0xf) + b]
+                        }
+                    }
+                }
+            }
+            DllCall("advapi32\CryptDestroyHash", "Ptr", hHash)
+        }
+        DllCall("advapi32\CryptReleaseContext", "Ptr", hProv, "UInt", 0)
+    }
+    return o
+}
+
+; CalcStringHash ====================================================================
+CalcStringHash(string, algid, encoding = "UTF-8", byref hash = 0, byref hashlength = 0)
+{
+    chrlength := (encoding = "CP1200" || encoding = "UTF-16") ? 2 : 1
+    length := (StrPut(string, encoding) - 1) * chrlength
+    VarSetCapacity(data, length, 0)
+    StrPut(string, &data, floor(length / chrlength), encoding)
+    return CalcAddrHash(&data, length, algid, hash, hashlength)
+}
+
+; CalcHexHash =======================================================================
+CalcHexHash(hexstring, algid)
+{
+    length := StrLen(hexstring) // 2
+    VarSetCapacity(data, length, 0)
+    loop % length
+    {
+        NumPut("0x" SubStr(hexstring, 2 * A_Index -1, 2), data, A_Index - 1, "Char")
+    }
+    return CalcAddrHash(&data, length, algid)
+}
+
+; CalcFileHash ======================================================================
+CalcFileHash(filename, algid, continue = 0, byref hash = 0, byref hashlength = 0)
+{
+    fpos := ""
+    if (!(f := FileOpen(filename, "r")))
+    {
+        return
+    }
+    f.pos := 0
+    if (!continue && f.length > 0x7fffffff)
+    {
+        return
+    }
+    if (!continue)
+    {
+        VarSetCapacity(data, f.length, 0)
+        f.rawRead(&data, f.length)
+        f.pos := oldpos
+        return CalcAddrHash(&data, f.length, algid, hash, hashlength)
+    }
+    hashlength := 0
+    while (f.pos < f.length)
+    {
+        readlength := (f.length - fpos > continue) ? continue : f.length - f.pos
+        VarSetCapacity(data, hashlength + readlength, 0)
+        DllCall("RtlMoveMemory", "Ptr", &data, "Ptr", &hash, "Ptr", hashlength)
+        f.rawRead(&data + hashlength, readlength)
+        h := CalcAddrHash(&data, hashlength + readlength, algid, hash, hashlength)
+    }
+    return h
+}
+
+; CRC32 =============================================================================
+CRC32(string, encoding = "UTF-8")
+{
+    chrlength := (encoding = "CP1200" || encoding = "UTF-16") ? 2 : 1
+    length := (StrPut(string, encoding) - 1) * chrlength
+    VarSetCapacity(data, length, 0)
+    StrPut(string, &data, floor(length / chrlength), encoding)
+    hMod := DllCall("Kernel32.dll\LoadLibrary", "Str", "Ntdll.dll")
+    SetFormat, Integer, % SubStr((A_FI := A_FormatInteger) "H", 0)
+    CRC := DllCall("Ntdll.dll\RtlComputeCrc32", "UInt", 0, "UInt", &data, "UInt", length, "UInt")
+    o := SubStr(CRC | 0x1000000000, -7)
+    DllCall("User32.dll\CharLower", "Str", o)
+    SetFormat, Integer, %A_FI%
+    return o, DllCall("Kernel32.dll\FreeLibrary", "Ptr", hMod)
+}
+
+; HexCRC32 ==========================================================================
+HexCRC32(hexstring)
+{
+    length := StrLen(hexstring) // 2
+    VarSetCapacity(data, length, 0)
+    loop % length
+    {
+        NumPut("0x" SubStr(hexstring, 2 * A_Index -1, 2), data, A_Index - 1, "Char")
+    }
+    hMod := DllCall("Kernel32.dll\LoadLibrary", "Str", "Ntdll.dll")
+    SetFormat, Integer, % SubStr((A_FI := A_FormatInteger) "H", 0)
+    CRC := DllCall("Ntdll.dll\RtlComputeCrc32", "UInt", 0, "UInt", &data, "UInt", length, "UInt")
+    o := SubStr(CRC | 0x1000000000, -7)
+    DllCall("User32.dll\CharLower", "Str", o)
+    SetFormat, Integer, %A_FI%
+    return o, DllCall("Kernel32.dll\FreeLibrary", "Ptr", hMod)
+}
+
+; FileCRC32 =========================================================================
+FileCRC32(sFile := "", cSz := 4)
+{
+    Bytes := ""
+    cSz := (cSz < 0 || cSz > 8) ? 2**22 : 2**(18 + cSz)
+    VarSetCapacity(Buffer, cSz, 0)
+    hFil := DllCall("Kernel32.dll\CreateFile", "Str", sFile, "UInt", 0x80000000, "UInt", 3, "Int", 0, "UInt", 3, "UInt", 0, "Int", 0, "UInt")
+    if (hFil < 1)
+    {
+        return hFil
+    }
+    hMod := DllCall("Kernel32.dll\LoadLibrary", "Str", "Ntdll.dll")
+    CRC := 0
+    DllCall("Kernel32.dll\GetFileSizeEx", "UInt", hFil, "Int64", &Buffer), fSz := NumGet(Buffer, 0, "Int64")
+    loop % (fSz // cSz + !!Mod(fSz, cSz))
+    {
+        DllCall("Kernel32.dll\ReadFile", "UInt", hFil, "Ptr", &Buffer, "UInt", cSz, "UInt*", Bytes, "UInt", 0)
+        CRC := DllCall("Ntdll.dll\RtlComputeCrc32", "UInt", CRC, "UInt", &Buffer, "UInt", Bytes, "UInt")
+    }
+    DllCall("Kernel32.dll\CloseHandle", "Ptr", hFil)
+    SetFormat, Integer, % SubStr((A_FI := A_FormatInteger) "H", 0)
+    CRC := SubStr(CRC + 0x1000000000, -7)
+    DllCall("User32.dll\CharLower", "Str", CRC)
+    SetFormat, Integer, %A_FI%
+    return CRC, DllCall("Kernel32.dll\FreeLibrary", "Ptr", hMod)
+}
+
+
+;;--- Create Function ---
+
+ButtonCreateCRC32:
+	;; Var = CRC32
+	IfEqual, NoCalc, 1, Goto, start
+    	GuiControlGet, CRC32,, CRC32
+	IfEqual, debug, 1, MsgBox, CRC32=%CRC32% File=%file%
+	OutputVar := file
+	SplitPath, File,, Dir
+	SplitPath, Dir, Folder
+	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
+	IfEqual, debug, 1, msgbox, File=%file%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
+	IfExist, %Dir%\%name_no_ext%.CRC32, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.CRC32 exist ! overwrite ?
+	IfMsgBox, No, goto, skipCRC32
+	FileDelete, %Dir%\%name_no_ext%.CRC32
+	FileAppend, %CRC32%, %Dir%\%name_no_ext%.CRC32
+	MsgBox, File %Dir%\%name_no_ext%.CRC32 was created !
+	skipCRC32:
+return
+
+ButtonCreateMD2:
+	;; Var = MD2
+	IfEqual, NoCalc, 1, Goto, start
+    	GuiControlGet, MD2,, MD2
+	IfEqual, debug, 1, MsgBox, MD2=%MD2% File=%file%
+	OutputVar := file
+	SplitPath, File,, Dir
+	SplitPath, Dir, Folder
+	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
+	IfEqual, debug, 1, msgbox, File=%file%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
+	IfExist, %Dir%\%name_no_ext%.MD2, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.MD2 exist ! overwrite ?
+	IfMsgBox, No, goto, skipMD2
+	FileDelete, %Dir%\%name_no_ext%.MD2
+	FileAppend, %MD2%, %Dir%\%name_no_ext%.MD2
+	MsgBox, File %Dir%\%name_no_ext%.MD2 was created !
+	skipMD2:
+return
+
+ButtonCreateMD4:
+	;; Var = MD4
+	IfEqual, NoCalc, 1, Goto, start
+    	GuiControlGet, MD4,, MD4
+	IfEqual, debug, 1, MsgBox, MD4=%MD4% File=%file%
+	OutputVar := file
+	SplitPath, File,, Dir
+	SplitPath, Dir, Folder
+	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
+	IfEqual, debug, 1, msgbox, File=%file%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
+	IfExist, %Dir%\%name_no_ext%.MD4, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.MD4 exist ! overwrite ?
+	IfMsgBox, No, goto, skipMD4
+	FileDelete, %Dir%\%name_no_ext%.MD4
+	FileAppend, %MD4%, %Dir%\%name_no_ext%.MD4
+	MsgBox, File %Dir%\%name_no_ext%.MD4 was created !
+	skipMD4:
+return
+
+ButtonCreateMD5:
+	;; Var = MD5
+	IfEqual, NoCalc, 1, Goto, start
+    	GuiControlGet, MD5,, MD5
+	IfEqual, debug, 1, MsgBox, MD5=%MD5% File=%file%
+	OutputVar := file
+	SplitPath, File,, Dir
+	SplitPath, Dir, Folder
+	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
+	IfEqual, debug, 1, msgbox, File=%file%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
+	IfExist, %Dir%\%name_no_ext%.md5, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.md5 exist ! overwrite ?
+	IfMsgBox, No, goto, skipmd5
+	FileDelete, %Dir%\%name_no_ext%.md5
+	FileAppend, %MD5%, %Dir%\%name_no_ext%.md5
+	MsgBox, File %Dir%\%name_no_ext%.md5 was created !
+	skipmd5:
+return
+
+ButtonCreateSHA1:
+	;; Var = SHA
+	IfEqual, NoCalc, 1, Goto, start
+    	GuiControlGet, SHA,, SHA
+	IfEqual, debug, 1, MsgBox, SHA=%SHA% File=%file%
+	OutputVar := file
+	SplitPath, File,, Dir
+	SplitPath, Dir, Folder
+	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
+	IfEqual, debug, 1, msgbox, File=%file%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
+	IfExist, %Dir%\%name_no_ext%.SHA1, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.SHA1 exist ! overwrite ?
+	IfMsgBox, No, goto, skipSHA
+	FileDelete, %Dir%\%name_no_ext%.SHA1
+	FileAppend, %SHA%, %Dir%\%name_no_ext%.SHA1
+	MsgBox, File %Dir%\%name_no_ext%.SHA1 was created !
+	skipSHA:
+return
+
+ButtonCreateSHA256:
+	;; Var = SHA256
+	IfEqual, NoCalc, 1, Goto, start
+    	GuiControlGet, SHA2,, SHA2
+	IfEqual, debug, 1, MsgBox, SHA256=%SHA2% File=%file%
+	OutputVar := file
+	SplitPath, File,, Dir
+	SplitPath, Dir, Folder
+	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
+	IfEqual, debug, 1, msgbox, File=%file%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
+	IfExist, %Dir%\%name_no_ext%.SHA256, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.SHA256 exist ! overwrite ?
+	IfMsgBox, No, goto, skipSHA256
+	FileDelete, %Dir%\%name_no_ext%.SHA256
+	FileAppend, %SHA2%, %Dir%\%name_no_ext%.SHA256
+	MsgBox, File %Dir%\%name_no_ext%.SHA256 was created !
+	skipSHA256:
+return
+
+ButtonCreateSHA384:
+	;; Var = SHA384
+	IfEqual, NoCalc, 1, Goto, start
+    	GuiControlGet, SHA3,, SHA3
+	IfEqual, debug, 1, MsgBox, SHA384=%SHA3% File=%file%
+	OutputVar := file
+	SplitPath, File,, Dir
+	SplitPath, Dir, Folder
+	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
+	IfEqual, debug, 1, msgbox, File=%file%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
+	IfExist, %Dir%\%name_no_ext%.SHA384, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.SHA384 exist ! overwrite ?
+	IfMsgBox, No, goto, skipSHA384
+	FileDelete, %Dir%\%name_no_ext%.SHA384
+	FileAppend, %SHA3%, %Dir%\%name_no_ext%.SHA384
+	MsgBox, File %Dir%\%name_no_ext%.SHA384 was created !
+	skipSHA384:
+return
+
+ButtonCreateSHA512:
+	;; Var = SHA512
+	IfEqual, NoCalc, 1, Goto, start
+    	GuiControlGet, SHA5,, SHA5
+	IfEqual, debug, 1, MsgBox, SHA512=%SHA5% File=%file%
+	OutputVar := file
+	SplitPath, File,, Dir
+	SplitPath, Dir, Folder
+	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
+	IfEqual, debug, 1, msgbox, File=%file%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
+	IfExist, %Dir%\%name_no_ext%.SHA512, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.SHA512 exist ! overwrite ?
+	IfMsgBox, No, goto, skipSHA512
+	FileDelete, %Dir%\%name_no_ext%.SHA512
+	FileAppend, %SHA5%, %Dir%\%name_no_ext%.SHA512
+	MsgBox, File %Dir%\%name_no_ext%.SHA512 was created !
+	skipSHA512:
+return
+
+;;--- Load function ---
+
+ButtonLoadCRC32:
+	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, debug, 1,msgbox, File=%File%
+	OutputVar := file
+	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
+	IfEqual, debug, 1,msgbox, OutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
+	FileReadLine, Loadhash, %dir%\%name_no_ext%.CRC32, 1
+	GuiControl,,Verify, %Loadhash%
+return
+
+ButtonLoadMD2:
+	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, debug, 1,msgbox, File=%File%
+	OutputVar := file
+	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
+	IfEqual, debug, 1,msgbox, OutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
+	FileReadLine, Loadhash, %dir%\%name_no_ext%.md2, 1
+	GuiControl,,Verify, %Loadhash%
+return
+
+ButtonLoadMD4:
+	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, debug, 1,msgbox, File=%File%
+	OutputVar := file
+	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
+	IfEqual, debug, 1,msgbox, OutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
+	FileReadLine, Loadhash, %dir%\%name_no_ext%.md4, 1
+	GuiControl,,Verify, %Loadhash%
+return
+
+ButtonLoadMD5:
+	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, debug, 1,msgbox, File=%File%
+	OutputVar := file
+	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
+	IfEqual, debug, 1,msgbox, OutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
+	FileReadLine, Loadhash, %dir%\%name_no_ext%.md5, 1
+	GuiControl,,Verify, %Loadhash%
+return
+
+ButtonLoadSHA1:
+	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, debug, 1,msgbox, File=%File%
+	OutputVar := file
+	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
+	IfEqual, debug, 1,msgbox, OutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
+	FileReadLine, Loadhash, %dir%\%name_no_ext%.SHA1, 1
+	GuiControl,,Verify, %Loadhash%
+return
+
+ButtonLoadSHA256:
+	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, debug, 1,msgbox, File=%File%
+	OutputVar := file
+	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
+	IfEqual, debug, 1,msgbox, OutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
+	FileReadLine, Loadhash, %dir%\%name_no_ext%.SHA256, 1
+	GuiControl,,Verify, %Loadhash%
+return
+
+ButtonLoadSHA384:
+	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, debug, 1,msgbox, File=%File%
+	OutputVar := file
+	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
+	IfEqual, debug, 1,msgbox, OutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
+	FileReadLine, Loadhash, %dir%\%name_no_ext%.SHA384, 1
+	GuiControl,,Verify, %Loadhash%
+return
+
+ButtonLoadSHA512:
+	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, debug, 1,msgbox, File=%File%
+	OutputVar := file
+	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
+	IfEqual, debug, 1,msgbox, OutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
+	FileReadLine, Loadhash, %dir%\%name_no_ext%.SHA512, 1
+	GuiControl,,Verify, %Loadhash%
+return
 
 ;;--- Tray Bar (must be at end of file) ---
 
