@@ -1,4 +1,9 @@
-# HashCalc ORIGINAL by jNizM
+# HashCalc
+
+THIS IS A FORKED WORK FROM jNizM
+
+I added some functions, load and create hash form files.
+
 Calculate hash from string, hex or file via AutoHotkey many options added.
 * create files (*.md5 *.sha1 ... etc)
 * load from file
