@@ -32,10 +32,13 @@ OR
 
 ## What is the correct format for hash file ?
 * A file with the same name of the file you want verify
-* Inside this file on the first line the hash
+* Inside this file on the first line include the hash
 * The extension of this file is *.crc32 *.md2 *.md4 *.md5 *.sha1 *.sha256 *.sha384 *.sha512
+* Extension *.txt is accepted too
 * Look image for easy-way
+
 ![Screenshot](md5.jpg)
+![Screenshot](format.jpg)
 
 ## Contributing
 
