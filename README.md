@@ -56,3 +56,6 @@ OR
 * thanks to AutoHotkey Community
 
 THIS IS A FORKED WORK FROM jNizM
+
+18 553 octets original
+38 575 octets LostByteSoft (version 2018-03-18-1756)
