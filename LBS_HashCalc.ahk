@@ -198,12 +198,7 @@ start:
 	Gui, Add, Button, x598 y302 w90 h23, CreateSHA512
 	Gui, Add, Button, x688 y302 w90 h23, LoadSHA512
 
-	Gui, Add, Checkbox, x5 y331 w100 h23 vCheckSHA1024, SHA-1024
-	Gui, Add, Edit, x115 y331 w390 h23 0x800 vSHA1024,
-	Gui, Add, text, x600 y335 w225 h23, SHA-1024 Experimental !
-	Gui, Add, Button, x508 y331 w80 h23 gCopySHA1024 vCopySHA1024, Copy
-	;Gui, Add, Button, x600 y331 w100 h23, CreateSHA1024
-	;Gui, Add, Button, x700 y331 w90 h23, LoadSHA1024
+	Gui, Add, Text, xm y340 w760 h1 0x10
 
 	Gui, Add, Text, x5 y366 w100 h23 , Verify
 
@@ -229,7 +224,7 @@ return
 LoadFile:
 	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before loading a file !
 	IfEqual, NoCalc, 1, Goto, file
-	FileSelectFile, OutputVar,2 ,, Select a file to load... (ESC to quit) HashCalc, (*.txt; *.crc32; *.md2; *.md4; *.md5; *.sha1; sha256; *.sha384; *.sha512; *.sha1024)
+	FileSelectFile, OutputVar,2 ,, Select a file to load... (ESC to quit) HashCalc, (*.txt; *.crc32; *.md2; *.md4; *.md5; *.sha1; sha256; *.sha384; *.sha512)
 		if ErrorLevel
 			goto, Start
 	IfEqual, OutputVar, , Goto, start
@@ -277,7 +272,6 @@ CheckEdit:
     GuiControl, % SHA2  = ""  ? "Disable" : "Enable",  CopySHA2
     GuiControl, % SHA3  = ""  ? "Disable" : "Enable",  CopySHA3
     GuiControl, % SHA5  = ""  ? "Disable" : "Enable",  CopySHA5
-    GuiControl, % SHA1024  = ""  ? "Disable" : "Enable",  CopySHA1024
 return
 
 File:
@@ -297,7 +291,6 @@ Calculate:
     GuiControl,, SHA2,  % ((CheckSHA2  = "1") ? ((DDL = "1") ? ((Check = "0") ? (SHA256(Str)) : (HMAC(HMAC, Str, "SHA256"))) : ((DDL = "2") ? (HexSHA256(Str)) : (FileSHA256(Str)))) : (""))
     GuiControl,, SHA3,  % ((CheckSHA3  = "1") ? ((DDL = "1") ? ((Check = "0") ? (SHA384(Str)) : (HMAC(HMAC, Str, "SHA384"))) : ((DDL = "2") ? (HexSHA384(Str)) : (FileSHA384(Str)))) : (""))
     GuiControl,, SHA5,  % ((CheckSHA5  = "1") ? ((DDL = "1") ? ((Check = "0") ? (SHA512(Str)) : (HMAC(HMAC, Str, "SHA512"))) : ((DDL = "2") ? (HexSHA512(Str)) : (FileSHA512(Str)))) : (""))
-    GuiControl,, SHA1024,  % ((CheckSHA1024  = "1") ? ((DDL = "1") ? ((Check = "0") ? (SHA1024(Str)) : (HMAC(HMAC, Str, "SHA1024"))) : ((DDL = "2") ? (HexSHA1024(Str)) : (FileSHA1024(Str)))) : (""))
 return
 
 Clear:
@@ -311,13 +304,12 @@ Clear:
     GuiControl,, SHA2,
     GuiControl,, SHA3,
     GuiControl,, SHA5,
-    GuiControl,, SHA1024,
     GuiControl,, Verify,
 return
 
 VerifyHash:
     Gui, Submit, NoHide
-    Result := Hashify(Verify, CRC32, MD2, MD4, MD5, SHA, SHA2, SHA3, SHA5, SHA1024)
+    Result := Hashify(Verify, CRC32, MD2, MD4, MD5, SHA, SHA2, SHA3, SHA5)
     GuiControl, % (InStr(Result, "OK") ? "+c008000" : "+c800000"), HashOK
     GuiControl,, HashOk, %Result%
 return
@@ -354,10 +346,6 @@ CopySHA5:
     Clipboard := SHA5
 return
 
-CopySHA1024:
-    Clipboard := SHA1024
-return
-
 ;;--- Functions ---
 
 ; FUNCTIONS =========================================================================
@@ -367,8 +355,10 @@ return
 ;; https://github.com/jNizM/HashCalc
 
 
+; FUNCTIONS =========================================================================
+
 ; Verify ============================================================================
-Hashify(Hash, CRC32, MD2, MD4, MD5, SHA, SHA2, SHA3, SHA5, SHA1024)
+Hashify(Hash, CRC32, MD2, MD4, MD5, SHA, SHA2, SHA3, SHA5)
 {
     return % (Hash = "")    ? ""
            : (Hash = CRC32) ? ("CRC32 OK")
@@ -379,7 +369,6 @@ Hashify(Hash, CRC32, MD2, MD4, MD5, SHA, SHA2, SHA3, SHA5, SHA1024)
            : (Hash = SHA2)  ? ("SHA256 OK")
            : (Hash = SHA3)  ? ("SHA384 OK")
            : (Hash = SHA5)  ? ("SHA512 OK")
-           : (Hash = SHA1024)  ? ("SHA1024 OK")
            : "FALSE"
 }
 
@@ -392,8 +381,7 @@ HMAC(Key, Message, Algo := "MD5")
                         , SHA:    {ID: 0x8004, Size:  64}
                         , SHA256: {ID: 0x800C, Size:  64}
                         , SHA384: {ID: 0x800D, Size: 128}
-                        , SHA512: {ID: 0x800E, Size: 128}
-                        , SHA1024: {ID: 0x8000, Size: 128}}
+                        , SHA512: {ID: 0x800E, Size: 128}}
     static iconst := 0x36
     static oconst := 0x5C
     if (!(Algorithms.HasKey(Algo)))
@@ -537,19 +525,6 @@ HexSHA512(hexstring)
 FileSHA512(filename)
 {
     return CalcFileHash(filename, 0x800e, 64 * 1024)
-}
-; SHA1024 ============================================================================
-SHA1024(string, encoding = "UTF-8")
-{
-    return CalcStringHash(string, 0x8000, encoding)
-}
-HexSHA1024(hexstring)
-{
-    return CalcHexHash(hexstring, 0x8000)
-}
-FileSHA1024(filename)
-{
-    return CalcFileHash(filename, 0x8000, 64 * 1024)
 }
 
 ; CalcAddrHash ======================================================================
@@ -700,6 +675,7 @@ FileCRC32(sFile := "", cSz := 4)
 }
 
 
+
 ;;--- Create Function ---
 
 ButtonCreateCRC32:
@@ -846,24 +822,6 @@ ButtonCreateSHA512:
 	skipSHA512:
 return
 
-ButtonCreateSHA1024:
-	;; Var = SHA1024
-	IfEqual, NoCalc, 1, Goto, start
-    	GuiControlGet, SHA1024,, SHA1024
-	IfEqual, debug, 1, MsgBox, SHA1024=%SHA1024% File=%file%
-	OutputVar := file
-	SplitPath, File,, Dir
-	SplitPath, Dir, Folder
-	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
-	IfEqual, debug, 1, msgbox, File=%file%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
-	IfExist, %Dir%\%name_no_ext%.SHA1024, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.SHA1024 exist ! overwrite ?
-	IfMsgBox, No, goto, skipSHA1024
-	FileDelete, %Dir%\%name_no_ext%.SHA1024
-	FileAppend, %SHA5%, %Dir%\%name_no_ext%.SHA1024
-	MsgBox, File %Dir%\%name_no_ext%.SHA1024 was created !
-	skipSHA1024:
-return
-
 ;;--- Load function ---
 
 ButtonLoadCRC32:
@@ -943,16 +901,6 @@ ButtonLoadSHA512:
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
 	IfEqual, debug, 1,msgbox, OutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
 	FileReadLine, Loadhash, %dir%\%name_no_ext%.SHA512, 1
-	GuiControl,,Verify, %Loadhash%
-return
-
-ButtonLoadSHA1024:
-	IfEqual, NoCalc, 1, Goto, start
-	IfEqual, debug, 1,msgbox, File=%File%
-	OutputVar := file
-	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
-	IfEqual, debug, 1,msgbox, OutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
-	FileReadLine, Loadhash, %dir%\%name_no_ext%.SHA1024, 1
 	GuiControl,,Verify, %Loadhash%
 return
 
