@@ -2,7 +2,12 @@
 
 THIS IS A FORKED WORK FROM jNizM
 
-I added some functions, load and create hash form files.
+## What is different from the fork work compared to original ?
+
+* I added some functions (load and create)
+* Review the GUI. (Calculate button, ... some other)
+* Icons for the program
+* Icons for the menu in tray bar
 
 Calculate hash from string, hex or file via AutoHotkey many options added.
 * create files (*.md5 *.sha1 ... etc)
@@ -57,5 +62,6 @@ OR
 
 THIS IS A FORKED WORK FROM jNizM
 
-18 553 octets original
-38 575 octets LostByteSoft (version 2018-03-18-1756)
+18 553 bytes original jNizm
+
+38 575 bytes LostByteSoft (version 2018-03-18-1756)
