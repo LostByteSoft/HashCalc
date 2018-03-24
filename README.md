@@ -8,6 +8,7 @@ THIS IS A FORKED WORK FROM jNizM
 * Review the GUI. (Calculate button, ... some other)
 * Icons for the program
 * Icons for the menu in tray bar
+* Auto-Load for hash file if present
 
 Calculate hash from string, hex or file via AutoHotkey many options added.
 * create files (*.md5 *.sha1 ... etc)
