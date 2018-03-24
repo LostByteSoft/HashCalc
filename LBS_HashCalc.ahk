@@ -22,7 +22,7 @@
 	SetEnv, title, LBS_HashCalc
 	SetEnv, name, LBS_HashCalc
 	SetEnv, mode, Verify hash files Creator and load from external file
-	SetEnv, version, Version 2018-03-24-1420
+	SetEnv, version, Version 2018-03-24-1551
 	SetEnv, Author, LostByteSoft
 	SetEnv, icofolder, C:\Program Files\Common Files
 	SetEnv, logoicon, ico_hash.ico
@@ -35,7 +35,7 @@
 	SetENv, clickfile, 0
 
 	;; Specific Icons (or files)
-	FileInstall, SharedIcons\ico_hash.ico, %icofolder%\ico_hash.ico, 0
+	FileInstall, ico_hash.ico, %icofolder%\ico_hash.ico, 0
 
 	;; Common ico
 	FileInstall, SharedIcons\ico_about.ico, %icofolder%\ico_about.ico, 0
@@ -106,7 +106,8 @@ start:
 	Gui, Font, s9, Courier New
 	Gui, Add, Text, x5 y5 w100 h15 , Data Format:
 
-	Gui, Add, Text, x145 y5 w390 h15 , Path file:
+	Gui, Add, Text, x145 y5 w90 h15 , Path file:
+	Gui, Add, Text, x465 y5 w350 h15 , Don't forget: bigger file must use more ram.
 	Gui, Add, DropDownList, x5 y26 AltSubmit vDDL, Text String|Hex|File
 	Gui, Add, Edit, x145 y26 w360 h23  vStr,
 	Gui, Add, Button, x508 y26 w80 h23 gFile vFile, File
@@ -173,7 +174,8 @@ start:
 	Gui, Add, Button, x598 y394 w180 h23 gClose, Close
 	Gui, Add, Checkbox, x5 y400 w350 h23 vReImage checked, Auto-Load highest hash file if exist.
 	Gui, Add, Text, x5 y425 w500 h21 , Made with AHK 2013-%A_YYYY%, jNizM
- and %author% %version%
+ and %author% %version%
+	Gui, Add, Text, x625 y435 w200 h21 , Escape will quit !
 	Gui, Show, AutoSize, %title% %mode%
 
 	SetTimer, CheckEdit, 100
@@ -226,7 +228,7 @@ Checkautoload:
 
 LoadFile:
 	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before loading a file !
-	IfEqual, NoCalc, 1, Goto, file
+	IfEqual, NoCalc, 1, Return
 	FileSelectFile, OutputVar,2 ,, Select a file to load... (ESC to quit) HashCalc, (*.txt; *.crc32; *.md2; *.md4; *.md5; *.sha1; sha256; *.sha384; *.sha512)
 		if ErrorLevel
 			goto, Start
@@ -315,6 +317,11 @@ Clear:
     GuiControl,, SHA3,
     GuiControl,, SHA5,
     GuiControl,, Verify,
+	SetEnv, NoCalc, 1
+	SetEnv, NoIcons, 0
+	SetEnv, Loadhash, 0
+	SetEnv, reimage, 0
+	SetENv, clickfile, 0
 return
 
 VerifyHash:
@@ -691,7 +698,8 @@ FileCRC32(sFile := "", cSz := 4)
 
 ButtonCreateCRC32:
 	;; Var = CRC32
-	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before create a file !
+	IfEqual, NoCalc, 1, Return
     	GuiControlGet, CRC32,, CRC32
 	IfEqual, debug, 1, MsgBox, CRC32=%CRC32% File=%file%
 	OutputVar := file
@@ -709,7 +717,8 @@ return
 
 ButtonCreateMD2:
 	;; Var = MD2
-	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before create a file !
+	IfEqual, NoCalc, 1, Return
     	GuiControlGet, MD2,, MD2
 	IfEqual, debug, 1, MsgBox, MD2=%MD2% File=%file%
 	OutputVar := file
@@ -727,7 +736,8 @@ return
 
 ButtonCreateMD4:
 	;; Var = MD4
-	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before create a file !
+	IfEqual, NoCalc, 1, Return
     	GuiControlGet, MD4,, MD4
 	IfEqual, debug, 1, MsgBox, MD4=%MD4% File=%file%
 	OutputVar := file
@@ -745,7 +755,8 @@ return
 
 ButtonCreateMD5:
 	;; Var = MD5
-	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before create a file !
+	IfEqual, NoCalc, 1, Return
     	GuiControlGet, MD5,, MD5
 	IfEqual, debug, 1, MsgBox, MD5=%MD5% File=%file%
 	OutputVar := file
@@ -763,7 +774,8 @@ return
 
 ButtonCreateSHA1:
 	;; Var = SHA
-	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before create a file !
+	IfEqual, NoCalc, 1, Return
     	GuiControlGet, SHA,, SHA
 	IfEqual, debug, 1, MsgBox, SHA=%SHA% File=%file%
 	OutputVar := file
@@ -781,7 +793,8 @@ return
 
 ButtonCreateSHA256:
 	;; Var = SHA256
-	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before create a file !
+	IfEqual, NoCalc, 1, Return
     	GuiControlGet, SHA2,, SHA2
 	IfEqual, debug, 1, MsgBox, SHA256=%SHA2% File=%file%
 	OutputVar := file
@@ -799,7 +812,8 @@ return
 
 ButtonCreateSHA384:
 	;; Var = SHA384
-	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before create a file !
+	IfEqual, NoCalc, 1, Return
     	GuiControlGet, SHA3,, SHA3
 	IfEqual, debug, 1, MsgBox, SHA384=%SHA3% File=%file%
 	OutputVar := file
@@ -817,7 +831,8 @@ return
 
 ButtonCreateSHA512:
 	;; Var = SHA512
-	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before create a file !
+	IfEqual, NoCalc, 1, Return
     	GuiControlGet, SHA5,, SHA5
 	IfEqual, debug, 1, MsgBox, SHA512=%SHA5% File=%file%
 	OutputVar := file
@@ -836,7 +851,8 @@ return
 ;;--- Load function ---
 
 ButtonLoadCRC32:
-	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before loading a file !
+	IfEqual, NoCalc, 1, Return
 	IfEqual, debug, 1,msgbox, File=%File%
 	OutputVar := file
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
@@ -846,7 +862,8 @@ ButtonLoadCRC32:
 return
 
 ButtonLoadMD2:
-	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before loading a file !
+	IfEqual, NoCalc, 1, Return
 	IfEqual, debug, 1,msgbox, File=%File%
 	OutputVar := file
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
@@ -856,7 +873,8 @@ ButtonLoadMD2:
 return
 
 ButtonLoadMD4:
-	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before loading a file !
+	IfEqual, NoCalc, 1, Return
 	IfEqual, debug, 1,msgbox, File=%File%
 	OutputVar := file
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
@@ -866,7 +884,8 @@ ButtonLoadMD4:
 return
 
 ButtonLoadMD5:
-	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before loading a file !
+	IfEqual, NoCalc, 1, Return
 	IfEqual, debug, 1,msgbox, File=%File%
 	OutputVar := file
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
@@ -876,7 +895,8 @@ ButtonLoadMD5:
 return
 
 ButtonLoadSHA1:
-	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before loading a file !
+	IfEqual, NoCalc, 1, Return
 	IfEqual, debug, 1,msgbox, File=%File%
 	OutputVar := file
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
@@ -886,7 +906,8 @@ ButtonLoadSHA1:
 return
 
 ButtonLoadSHA256:
-	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before loading a file !
+	IfEqual, NoCalc, 1, Return
 	IfEqual, debug, 1,msgbox, File=%File%
 	OutputVar := file
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
@@ -896,7 +917,8 @@ ButtonLoadSHA256:
 return
 
 ButtonLoadSHA384:
-	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before loading a file !
+	IfEqual, NoCalc, 1, Return
 	IfEqual, debug, 1,msgbox, File=%File%
 	OutputVar := file
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
@@ -906,7 +928,8 @@ ButtonLoadSHA384:
 return
 
 ButtonLoadSHA512:
-	IfEqual, NoCalc, 1, Goto, start
+	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before loading a file !
+	IfEqual, NoCalc, 1, Return
 	IfEqual, debug, 1,msgbox, File=%File%
 	OutputVar := file
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
