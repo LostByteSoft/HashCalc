@@ -12,7 +12,7 @@
 
 	SetWorkingDir, %A_ScriptDir%
 	#Persistent
-	#Warn
+	;; #Warn
 	#NoEnv
 
 	SetBatchLines, -1
@@ -22,20 +22,20 @@
 	SetEnv, title, LBS_HashCalc
 	SetEnv, name, LBS_HashCalc
 	SetEnv, mode, Verify hash files Creator and load from external file
-	SetEnv, version, Version 2018-03-18-1756
+	SetEnv, version, Version 2018-03-24-1420
 	SetEnv, Author, LostByteSoft
 	SetEnv, icofolder, C:\Program Files\Common Files
 	SetEnv, logoicon, ico_hash.ico
-	;;SetEnv, love, chr(9829)
-	;;SetEnv, copyright, chr(169)
 	SetEnv, pause, 0
 	SetEnv, debug, 0
 	SetEnv, NoCalc, 1
 	SetEnv, NoIcons, 0
 	SetEnv, Loadhash, 0
+	SetEnv, reimage, 0
+	SetENv, clickfile, 0
 
 	;; Specific Icons (or files)
-	FileInstall, ico_hash.ico, %icofolder%\ico_hash.ico, 0
+	FileInstall, SharedIcons\ico_hash.ico, %icofolder%\ico_hash.ico, 0
 
 	;; Common ico
 	FileInstall, SharedIcons\ico_about.ico, %icofolder%\ico_about.ico, 0
@@ -47,62 +47,45 @@
 	FileInstall, SharedIcons\ico_HotKeys.ico, %icofolder%\ico_HotKeys.ico, 0
 	FileInstall, SharedIcons\ico_pause.ico, %icofolder%\ico_pause.ico, 0
 	FileInstall, SharedIcons\ico_loupe.ico, %icofolder%\ico_loupe.ico, 0
+	FileInstall, SharedIcons\ico_folder.ico, %icofolder%\ico_folder.ico, 0
 
 ;;--- Menu Tray options ---
 
-	IfNotExist, %icofolder%\ico_hash.ico, setenv, 0, noicons
-
 	Menu, Tray, NoStandard
 	Menu, tray, add, ---=== %title% ===---, about
-	IfEqual, noicons, 1, goto, skip1
 	Menu, Tray, Icon, ---=== %title% ===---, %icofolder%\%logoicon%
-	skip1:
 	Menu, tray, add, Show logo, GuiLogo
 	Menu, tray, add, Secret MsgBox, secret					; Secret MsgBox, just show all options and variables of the program.
-	IfEqual, noicons, 1, goto, skip2
 	Menu, Tray, Icon, Secret MsgBox, %icofolder%\ico_lock.ico
-	skip2:
-	Menu, tray, add, About && ReadMe, author
-	IfEqual, noicons, 1, goto, skip3
+	Menu, tray, add, About && ReadMe, author				; infos about author
 	Menu, Tray, Icon, About && ReadMe, %icofolder%\ico_about.ico
-	skip3:
-	Menu, tray, add, Author %author%, about
+	Menu, tray, add, Author %author%, about					; author msg box
 	menu, tray, disable, Author %author%
-	Menu, tray, add, %version%, about
+	Menu, tray, add, %version%, about					; version of the software
 	menu, tray, disable, %version%
-	menu, tray, add, Show Gui, start					; Default gui
-	IfEqual, noicons, 1, goto, skip4
-	Menu, Tray, Icon, Show Gui, %icofolder%\ico_loupe.ico
-	skip4:
-	Menu, Tray, Default, Show Gui
-	Menu, Tray, Click, 1
+	Menu, tray, add, Open project web page, webpage				; open web page project
+	Menu, Tray, Icon, Open project web page, %icofolder%\ico_HotKeys.ico
 	Menu, tray, add,
 	Menu, tray, add, --== Control ==--, about
-	IfEqual, noicons, 1, goto, skip5
 	Menu, Tray, Icon, --== Control ==--, %icofolder%\ico_options.ico
-	skip5:
-	Menu, tray, add, Exit %title%, ExitApp					; Close exit program
-	IfEqual, noicons, 1, goto, skip6
-	Menu, Tray, Icon, Exit %title%, %icofolder%\ico_shut.ico
-	skip6:
-	Menu, tray, add, Refresh (Ini mod), doReload 				; Reload the script.
-	IfEqual, noicons, 1, goto, skip7
-	Menu, Tray, Icon, Refresh (Ini mod), %icofolder%\ico_reboot.ico
-	skip7:
-	Menu, tray, add, Set Debug (Toggle), debug
-	IfEqual, noicons, 1, goto, skip8
+	menu, tray, add, Show Gui (Same as click), start			; Default gui open
+	Menu, Tray, Icon, Show Gui (Same as click), %icofolder%\ico_loupe.ico
+	Menu, Tray, Default, Show Gui (Same as click)
+	Menu, Tray, Click, 1
+	Menu, tray, add, Set Debug (Toggle), debug				; debug msg
 	Menu, Tray, Icon, Set Debug (Toggle), %icofolder%\ico_debug.ico
-	skip8:
-	Menu, tray, add, Pause (Toggle), pause
-	IfEqual, noicons, 1, goto, skip9
+	Menu, tray, add, Open A_WorkingDir, A_WorkingDir			; open where the exe is
+	Menu, Tray, Icon, Open A_WorkingDir, %icofolder%\ico_folder.ico
+	Menu, tray, add,
+	Menu, tray, add, Exit %title%, ExitApp					; Close exit program
+	Menu, Tray, Icon, Exit %title%, %icofolder%\ico_shut.ico
+	Menu, tray, add, Refresh (Ini mod), doReload 				; Reload the script.
+	Menu, Tray, Icon, Refresh (Ini mod), %icofolder%\ico_reboot.ico
+	Menu, tray, add, Pause (Toggle), pause					; pause the script
 	Menu, Tray, Icon, Pause (Toggle), %icofolder%\ico_pause.ico
-	skip9:
-	Menu, tray, add, Open A_WorkingDir, A_WorkingDir
 	Menu, tray, add,
 	Menu, tray, add, --== Options ==--, about
-	IfEqual, noicons, 1, goto, skip10
 	Menu, Tray, Icon, --== Options ==--, %icofolder%\ico_options.ico
-	skip10:
 	Menu, tray, add, 1 - File, File
 	Menu, tray, add, 2 - Calculate, Calculate
 	Menu, tray, add, 3 - Load File, LoadFile
@@ -118,30 +101,20 @@
 	TrayTip, %title%, Escape will exit !, 1, 2
 
 start:
-
-	Gui, Destroy		;; some errors appears some times, needed
-
+	Gui, Destroy					;; some errors appears some times, needed
 	Gui, Margin, 10, 10
 	Gui, Font, s9, Courier New
-
 	Gui, Add, Text, x5 y5 w100 h15 , Data Format:
 
 	Gui, Add, Text, x145 y5 w390 h15 , Path file:
-
-
 	Gui, Add, DropDownList, x5 y26 AltSubmit vDDL, Text String|Hex|File
-
 	Gui, Add, Edit, x145 y26 w360 h23  vStr,
 	Gui, Add, Button, x508 y26 w80 h23 gFile vFile, File
-
 	Gui, Add, Checkbox, x5 y55 w100 h23 vCheck, HMAC
 	Gui, Add, Edit, x115 y55 w390 h23 vHMAC,
-
 	Gui, Add, Button, x598 y26 w180 h70 gCalculate, Calculate
-
 	Gui, Add, Text, x115 y80 w65 h15 , Hash:
 	Gui, Add, Text, x515 y80 w65 h15 , Clipboard
-
 	Gui, Add, Checkbox, x5 y99 w100 h23 vCheckCRC32, CRC32
 
 	Gui, Add, Edit, x115 y99 w390 h23 0x800 vCRC32, 
@@ -149,20 +122,17 @@ start:
 	Gui, Add, Button, x508 y99 w80 h23 gCopyCRC32 vCopyCRC32, Copy
 	Gui, Add, Button, x598 y99 w90 h23, CreateCRC32
 	Gui, Add, Button, x688 y99 w90 h23, LoadCRC32
-
 	Gui, Add, Checkbox, x5 y128 w100 h23 vCheckMD2, MD2
 	Gui, Add, Edit, x115 y128 w390 h23 0x800 vMD2, 
 
 	Gui, Add, Button, x508 y128 w80 h23 gCopyMD2 vCopyMD2, Copy
 	Gui, Add, Button, x598 y128 w90 h23, CreateMD2
 	Gui, Add, Button, x688 y128 w90 h23, LoadMD2
-
 	Gui, Add, Checkbox, x5 y157 w100 h23 vCheckMD4, MD4
 	Gui, Add, Edit, x115 y157 w390 h23 0x800 vMD4,
 	Gui, Add, Button, x508 y157 w80 h23 gCopyMD4 vCopyMD4, Copy
 	Gui, Add, Button, x598 y157 w90 h23, CreateMD4
 	Gui, Add, Button, x688 y157 w90 h23, LoadMD4
-
 	Gui, Add, Checkbox, x5 y186 w100 h23 Checked vCheckMD5, MD5
 
 	Gui, Add, Edit, x115 y186 w390 h23 0x800 vMD5, 
@@ -170,56 +140,89 @@ start:
 	Gui, Add, Button, x508 y186 w80 h23 gCopyMD5 vCopyMD5, Copy
 	Gui, Add, Button, x598 y186 w90 h23, CreateMD5
 	Gui, Add, Button, x688 y186 w90 h23, LoadMD5
-
 	Gui, Add, Checkbox, x5 y215 w100 h23 Checked vCheckSHA, SHA-1
 	Gui, Add, Edit, x115 y215 w390 h23 0x800 vSHA,
 	Gui, Add, Button, x508 y215 w80 h23 gCopySHA vCopySHA, Copy
 	Gui, Add, Button, x598 y215 w90 h23, CreateSHA1
 	Gui, Add, Button, x688 y215 w90 h23, LoadSHA1
-
 	Gui, Add, Checkbox, x5 y244 w100 h23 vCheckSHA2, SHA-256
 	Gui, Add, Edit, x115 y244 w390 h23 0x800 vSHA2, 
 
 	Gui, Add, Button, x508 y244 w80 h23 gCopySHA2 vCopySHA2, Copy
 	Gui, Add, Button, x598 y244 w90 h23, CreateSHA256
 	Gui, Add, Button, x688 y244 w90 h23, LoadSHA256
-
 	Gui, Add, Checkbox, x5 y273 w100 h23 vCheckSHA3, SHA-384
 	Gui, Add, Edit, x115 y273 w390 h23 0x800 vSHA3,
 
 	Gui, Add, Button, x508 y273 w80 h23 gCopySHA3 vCopySHA3, Copy
 	Gui, Add, Button, x598 y273 w90 h23, CreateSHA384
 	Gui, Add, Button, x688 y273 w90 h23, LoadSHA384
-
 	Gui, Add, Checkbox, x5 y302 w100 h23 vCheckSHA5, SHA-512
 	Gui, Add, Edit, x115 y302 w390 h23 0x800 vSHA5,
 
 	Gui, Add, Button, x508 y302 w80 h23 gCopySHA5 vCopySHA5, Copy
 	Gui, Add, Button, x598 y302 w90 h23, CreateSHA512
 	Gui, Add, Button, x688 y302 w90 h23, LoadSHA512
-
 	Gui, Add, Text, xm y340 w760 h1 0x10
-
 	Gui, Add, Text, x5 y366 w100 h23 , Verify
 
 	Gui, Add, Edit, x115 y366 w390 h23 vVerify,
 	Gui, Add, Edit, x508 y366 w80 h23 0x800 vHashOK,
-
 	Gui, Add, Button, x598 y366 w90 h23 gloadFile, LoadFile
 	Gui, Add, Button, x688 y366 w90 h23 gClear, Clear
 	Gui, Add, Button, x598 y394 w180 h23 gClose, Close
-
-	Gui, Add, Text, x5 y400 w500 h21 , Made with AHK 2013-%A_YYYY%, jNizM
+	Gui, Add, Checkbox, x5 y400 w350 h23 vReImage checked, Auto-Load highest hash file if exist.
+	Gui, Add, Text, x5 y425 w500 h21 , Made with AHK 2013-%A_YYYY%, jNizM
  and %author% %version%
 	Gui, Show, AutoSize, %title% %mode%
+
+	SetTimer, CheckEdit, 100
+	SetTimer, VerifyHash, 200
+	return
 
 
 ;;--- Gui buttons & control ---
 
-SetTimer, CheckEdit, 100
-SetTimer, VerifyHash, 200
-return
-
+Checkautoload:
+	;;MsgBox, (Checkautoload) File=%File%
+	OutputVar := file
+	Test := file
+	SplitPath, Test,, Dir
+	SplitPath, Dir, Folder
+	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
+	IfEqual, debug, 1, msgbox, BACK :`n`nOutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
+	Gui, Submit, NoHide
+	GuiControlGet, CheckSHA51,, CheckSHA5
+	GuiControlGet, CheckSHA31,, CheckSHA3
+	GuiControlGet, CheckSHA21,, CheckSHA2
+	GuiControlGet, CheckSHA11,, CheckSHA
+	GuiControlGet, Checkmd51,, Checkmd5
+	GuiControlGet, Checkmd41,, Checkmd4
+	GuiControlGet, Checkmd21,, Checkmd2
+	GuiControlGet, Checkcrc321,, Checkcrc32
+	IfEqual, debug, 1, msgbox, Checkcrc32=%Checkcrc321% Checkmd2=%Checkmd21% Checkmd4=%Checkmd41% Checkmd5=%Checkmd51% CheckSHA1=%CheckSHA11% CheckSHA2=%CheckSHA21% CheckSHA3=%CheckSHA31% CheckSHA5=%CheckSHA51%
+	IfEqual, CheckSHA51, 0, goto, next1
+	IfExist, %dir%\%name_no_ext%.sha512, goto, ButtonLoadsha512
+	next1:
+	IfEqual, CheckSHA31, 0, goto, next2
+	IfExist, %dir%\%name_no_ext%.sha384, goto, ButtonLoadsha384
+	next2:
+	IfEqual, CheckSHA11, 0, goto, next3
+	IfExist, %dir%\%name_no_ext%.sha1, goto, ButtonLoadsha1
+	next3:
+	IfEqual, Checkmd51, 0, goto, next4
+	IfExist, %dir%\%name_no_ext%.md5, goto, ButtonLoadMD5
+	next4:
+	IfEqual, CheckSHA41, 0, goto, next5
+	IfExist, %dir%\%name_no_ext%.md4, goto, ButtonLoadMD4
+	next5:
+	IfEqual, CheckSHA21, 0, goto, next6
+	IfExist, %dir%\%name_no_ext%.md2, goto, ButtonLoadMD2
+	next6:
+	IfEqual, Checkcrc321, 0, goto, next7
+	IfExist, %dir%\%name_no_ext%.crc32, goto, ButtonLoadcrc32
+	next7:
+	Return
 
 LoadFile:
 	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before loading a file !
@@ -275,22 +278,29 @@ CheckEdit:
 return
 
 File:
-    GuiControl, Choose, DDL, 3
-    FileSelectFile, File
-    GuiControl,, Str, %File%
-return
+	SetENv, clickfile, 1
+	GuiControl, Choose, DDL, 3
+	FileSelectFile, File
+	GuiControl,, Str, %File%
+	return
 
 Calculate:
+	IfEqual, clickfile, 0, MsgBox, Load a file before calculate !
+	IfEqual, clickfile, 0, return
 	SetEnv, NoCalc, 0
-    Gui, Submit, NoHide
-    GuiControl,, CRC32, % ((CheckCRC32 = "1") ? ((DDL = "1") ? ((Check = "0") ? (CRC32(Str))  : "")                          : ((DDL = "2") ? (HexCRC32(Str))  : (FileCRC32(Str))))  : (""))
-    GuiControl,, MD2,   % ((CheckMD2   = "1") ? ((DDL = "1") ? ((Check = "0") ? (MD2(Str))    : (HMAC(HMAC, Str, "MD2")))    : ((DDL = "2") ? (HexMD2(Str))    : (FileMD2(Str))))    : (""))
-    GuiControl,, MD4,   % ((CheckMD4   = "1") ? ((DDL = "1") ? ((Check = "0") ? (MD4(Str))    : (HMAC(HMAC, Str, "MD4")))    : ((DDL = "2") ? (HexMD4(Str))    : (FileMD4(Str))))    : (""))
-    GuiControl,, MD5,   % ((CheckMD5   = "1") ? ((DDL = "1") ? ((Check = "0") ? (MD5(Str))    : (HMAC(HMAC, Str, "MD5")))    : ((DDL = "2") ? (HexMD5(Str))    : (FileMD5(Str))))    : (""))
-    GuiControl,, SHA,   % ((CheckSHA   = "1") ? ((DDL = "1") ? ((Check = "0") ? (SHA(Str))    : (HMAC(HMAC, Str, "SHA")))    : ((DDL = "2") ? (HexSHA(Str))    : (FileSHA(Str))))    : (""))
-    GuiControl,, SHA2,  % ((CheckSHA2  = "1") ? ((DDL = "1") ? ((Check = "0") ? (SHA256(Str)) : (HMAC(HMAC, Str, "SHA256"))) : ((DDL = "2") ? (HexSHA256(Str)) : (FileSHA256(Str)))) : (""))
-    GuiControl,, SHA3,  % ((CheckSHA3  = "1") ? ((DDL = "1") ? ((Check = "0") ? (SHA384(Str)) : (HMAC(HMAC, Str, "SHA384"))) : ((DDL = "2") ? (HexSHA384(Str)) : (FileSHA384(Str)))) : (""))
-    GuiControl,, SHA5,  % ((CheckSHA5  = "1") ? ((DDL = "1") ? ((Check = "0") ? (SHA512(Str)) : (HMAC(HMAC, Str, "SHA512"))) : ((DDL = "2") ? (HexSHA512(Str)) : (FileSHA512(Str)))) : (""))
+	Gui, Submit, NoHide
+		GuiControl,, CRC32, % ((CheckCRC32 = "1") ? ((DDL = "1") ? ((Check = "0") ? (CRC32(Str))  : "")                          : ((DDL = "2") ? (HexCRC32(Str))  : (FileCRC32(Str))))  : (""))
+		GuiControl,, MD2,   % ((CheckMD2   = "1") ? ((DDL = "1") ? ((Check = "0") ? (MD2(Str))    : (HMAC(HMAC, Str, "MD2")))    : ((DDL = "2") ? (HexMD2(Str))    : (FileMD2(Str))))    : (""))
+		GuiControl,, MD4,   % ((CheckMD4   = "1") ? ((DDL = "1") ? ((Check = "0") ? (MD4(Str))    : (HMAC(HMAC, Str, "MD4")))    : ((DDL = "2") ? (HexMD4(Str))    : (FileMD4(Str))))    : (""))
+		GuiControl,, MD5,   % ((CheckMD5   = "1") ? ((DDL = "1") ? ((Check = "0") ? (MD5(Str))    : (HMAC(HMAC, Str, "MD5")))    : ((DDL = "2") ? (HexMD5(Str))    : (FileMD5(Str))))    : (""))
+		GuiControl,, SHA,   % ((CheckSHA   = "1") ? ((DDL = "1") ? ((Check = "0") ? (SHA(Str))    : (HMAC(HMAC, Str, "SHA")))    : ((DDL = "2") ? (HexSHA(Str))    : (FileSHA(Str))))    : (""))
+		GuiControl,, SHA2,  % ((CheckSHA2  = "1") ? ((DDL = "1") ? ((Check = "0") ? (SHA256(Str)) : (HMAC(HMAC, Str, "SHA256"))) : ((DDL = "2") ? (HexSHA256(Str)) : (FileSHA256(Str)))) : (""))
+		GuiControl,, SHA3,  % ((CheckSHA3  = "1") ? ((DDL = "1") ? ((Check = "0") ? (SHA384(Str)) : (HMAC(HMAC, Str, "SHA384"))) : ((DDL = "2") ? (HexSHA384(Str)) : (FileSHA384(Str)))) : (""))
+		GuiControl,, SHA5,  % ((CheckSHA5  = "1") ? ((DDL = "1") ? ((Check = "0") ? (SHA512(Str)) : (HMAC(HMAC, Str, "SHA512"))) : ((DDL = "2") ? (HexSHA512(Str)) : (FileSHA512(Str)))) : (""))
+	;;if autoload goto autoload
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, debug, 1, msgbox, reimage=%reimage%
+	IfEqual, reimage, 1, goto, Checkautoload
 return
 
 Clear:
@@ -345,6 +355,7 @@ return
 CopySHA5:
     Clipboard := SHA5
 return
+
 
 ;;--- Functions ---
 
@@ -991,6 +1002,10 @@ GuiLogo:
 A_WorkingDir:
 	IfEqual, debug, 1, msgbox, (A_WorkingDir:) run explorer.exe "%A_WorkingDir%"
 	run, explorer.exe "%A_WorkingDir%"
+	Return
+
+webpage:
+	run, https://github.com/LostByteSoft/HashCalc
 	Return
 
 ;;--- End of script ---
