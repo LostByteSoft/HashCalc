@@ -22,7 +22,7 @@
 	SetEnv, title, LBS_HashCalc
 	SetEnv, name, LBS_HashCalc
 	SetEnv, mode, Verify hash files Creator and load from external file
-	SetEnv, version, Version 2018-03-24-1551
+	SetEnv, version, Version 2018-03-25-0815
 	SetEnv, Author, LostByteSoft
 	SetEnv, icofolder, C:\Program Files\Common Files
 	SetEnv, logoicon, ico_hash.ico
@@ -101,21 +101,24 @@
 	TrayTip, %title%, Escape will exit !, 1, 2
 
 start:
-	Gui, Destroy					;; some errors appears some times, needed
 	Gui, Margin, 10, 10
 	Gui, Font, s9, Courier New
 	Gui, Add, Text, x5 y5 w100 h15 , Data Format:
 
 	Gui, Add, Text, x145 y5 w90 h15 , Path file:
 	Gui, Add, Text, x465 y5 w350 h15 , Don't forget: bigger file must use more ram.
-	Gui, Add, DropDownList, x5 y26 AltSubmit vDDL, Text String|Hex|File
-	Gui, Add, Edit, x145 y26 w360 h23  vStr,
-	Gui, Add, Button, x508 y26 w80 h23 gFile vFile, File
+	Gui, Add, DropDownList, x5 y26 AltSubmit vDDL choose1, Text String|Hex|File
+	Gui, Add, Edit, x160 y26 w425 h23  vStr,
+	Gui, Add, Button, x598 y26 w180 h23 gFile vFile, File
+
 	Gui, Add, Checkbox, x5 y55 w100 h23 vCheck, HMAC
 	Gui, Add, Edit, x115 y55 w390 h23 vHMAC,
-	Gui, Add, Button, x598 y26 w180 h70 gCalculate, Calculate
+
+	Gui, Add, Button, x598 y55 w180 h23 gCalculate, Calculate
+
 	Gui, Add, Text, x115 y80 w65 h15 , Hash:
 	Gui, Add, Text, x515 y80 w65 h15 , Clipboard
+
 	Gui, Add, Checkbox, x5 y99 w100 h23 vCheckCRC32, CRC32
 
 	Gui, Add, Edit, x115 y99 w390 h23 0x800 vCRC32, 
@@ -164,6 +167,7 @@ start:
 	Gui, Add, Button, x508 y302 w80 h23 gCopySHA5 vCopySHA5, Copy
 	Gui, Add, Button, x598 y302 w90 h23, CreateSHA512
 	Gui, Add, Button, x688 y302 w90 h23, LoadSHA512
+
 	Gui, Add, Text, xm y340 w760 h1 0x10
 	Gui, Add, Text, x5 y366 w100 h23 , Verify
 
@@ -287,8 +291,8 @@ File:
 	return
 
 Calculate:
-	IfEqual, clickfile, 0, MsgBox, Load a file before calculate !
-	IfEqual, clickfile, 0, return
+	;;IfEqual, clickfile, 0, MsgBox, Load a file before calculate ! ; for hmac
+	;;IfEqual, clickfile, 0, return
 	SetEnv, NoCalc, 0
 	Gui, Submit, NoHide
 		GuiControl,, CRC32, % ((CheckCRC32 = "1") ? ((DDL = "1") ? ((Check = "0") ? (CRC32(Str))  : "")                          : ((DDL = "2") ? (HexCRC32(Str))  : (FileCRC32(Str))))  : (""))
@@ -299,9 +303,8 @@ Calculate:
 		GuiControl,, SHA2,  % ((CheckSHA2  = "1") ? ((DDL = "1") ? ((Check = "0") ? (SHA256(Str)) : (HMAC(HMAC, Str, "SHA256"))) : ((DDL = "2") ? (HexSHA256(Str)) : (FileSHA256(Str)))) : (""))
 		GuiControl,, SHA3,  % ((CheckSHA3  = "1") ? ((DDL = "1") ? ((Check = "0") ? (SHA384(Str)) : (HMAC(HMAC, Str, "SHA384"))) : ((DDL = "2") ? (HexSHA384(Str)) : (FileSHA384(Str)))) : (""))
 		GuiControl,, SHA5,  % ((CheckSHA5  = "1") ? ((DDL = "1") ? ((Check = "0") ? (SHA512(Str)) : (HMAC(HMAC, Str, "SHA512"))) : ((DDL = "2") ? (HexSHA512(Str)) : (FileSHA512(Str)))) : (""))
-	;;if autoload goto autoload
 	GuiControlGet, ReImage,, Reimage
-	IfEqual, debug, 1, msgbox, reimage=%reimage%
+	IfEqual, debug, 1, msgbox, (Calculate) reimage=%reimage%
 	IfEqual, reimage, 1, goto, Checkautoload
 return
 
@@ -365,12 +368,6 @@ return
 
 
 ;;--- Functions ---
-
-; FUNCTIONS =========================================================================
-
-
-;; THANKS TO jNizM/HashCalc
-;; https://github.com/jNizM/HashCalc
 
 
 ; FUNCTIONS =========================================================================
@@ -693,6 +690,8 @@ FileCRC32(sFile := "", cSz := 4)
 }
 
 
+; END FUNCTION ==============================================================================
+
 
 ;;--- Create Function ---
 
@@ -938,27 +937,7 @@ ButtonLoadSHA512:
 	GuiControl,,Verify, %Loadhash%
 return
 
-;;--- Tray Bar (must be at end of file) ---
-
-secret:
-	FileReadLine, ExternalIP, ip.txt, 1
-	SetEnv, ExternalIPnew, %ExternalIP%
-	MsgBox, 64, %title%, (Secret:) All variables is shown here.`n`ntitle=%title% mode=%mode% version=%version% author=%author% LogoIcon=%logoicon% Debug=%debug%`n`nA_WorkingDir=%A_WorkingDir%`nIcoFolder=%icofolder%`n`nClipboard (if text)=%clipboard%
-	Return
-
-about:
-	TrayTip, %title%, %mode% by %author%, 2, 1
-	Sleep, 500
-	Return
-
-version:
-	TrayTip, %title%, %version%, 2, 2
-	Sleep, 500
-	Return
-
-Author:
-	MsgBox, 64, %title%, (Author:) %title% %mode% %version% %author% This software is usefull to calculate a hash of a file. A file (ex: md5.txt contail only a string of a hash of a file)`n`n`tGo to https://github.com/LostByteSoft
-	Return
+;;--- debug pause ---
 
 Debug:
 	IfEqual, debug, 0, goto, enable
@@ -988,6 +967,8 @@ pause:
 		SetEnv, pause, 0
 		Goto, start
 
+;;--- quit ---
+
 Escape::
 	ExitApp
 
@@ -1007,6 +988,26 @@ doReload:
 Close:
 	Gui, destroy
 	ExitApp
+
+;;--- Tray Bar (must be at end of file) ---
+
+secret:
+	MsgBox, 64, %title%, (Secret:) All variables is shown here.`n`ntitle=%title% mode=%mode% version=%version% author=%author% LogoIcon=%logoicon% Debug=%debug%`n`nA_WorkingDir=%A_WorkingDir%`nIcoFolder=%icofolder%`n`nClipboard (if text)=%clipboard%
+	Return
+
+about:
+	TrayTip, %title%, %mode% by %author%, 2, 1
+	Sleep, 500
+	Return
+
+version:
+	TrayTip, %title%, %version%, 2, 2
+	Sleep, 500
+	Return
+
+Author:
+	MsgBox, 64, %title%, (Author:) %title% %mode% %version% %author% This software is usefull to calculate a hash of a file. A file (ex: md5.txt contail only a string of a hash of a file)`n`n`tGo to https://github.com/LostByteSoft
+	Return
 
 GuiLogo:
 	IfNotExist, %icofolder%\%logoicon%, goto, skiplogoicon
