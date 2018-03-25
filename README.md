@@ -30,7 +30,14 @@ Calculate hash from string, hex or file via AutoHotkey many options added.
 * HMAC
 
 ## Screenshot
-![Screenshot](LBS_HashCalc_6.jpg)
+* Actual version
+![Screenshot](2018-03-25-0815.jpg)
+
+* Old version
+![Screenshot](2018-03-24-1233.jpg)
+
+* Original version
+![Screenshot](original.jpg)
 
 ## How to use it ?
 * Click "File" to load something (larges files takes time...)
