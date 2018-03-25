@@ -31,12 +31,15 @@ Calculate hash from string, hex or file via AutoHotkey many options added.
 
 ## Screenshot
 * Actual version
+
 ![Screenshot](2018-03-25-0815.jpg)
 
 * Old version
+
 ![Screenshot](2018-03-24-1233.jpg)
 
 * Original version
+
 ![Screenshot](original.jpg)
 
 ## How to use it ?
@@ -71,5 +74,5 @@ OR
 THIS IS A FORKED WORK FROM jNizM
 
 18 553 bytes original jNizm
-
-38 575 bytes LostByteSoft (version 2018-03-18-1756)
+38 575 bytes LostByteSoft (version 2018-03-18)
+39 502 bytes LostByteSoft (version 2018-03-25)
