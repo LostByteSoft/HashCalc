@@ -32,11 +32,7 @@ Calculate hash from string, hex or file via AutoHotkey many options added.
 ## Screenshot
 * Actual version
 
-![Screenshot](2018-03-25-0815.jpg)
-
-* Old version
-
-![Screenshot](2018-03-24-1233.jpg)
+![Screenshot](2018-04-12.jpg)
 
 * Original version
 
