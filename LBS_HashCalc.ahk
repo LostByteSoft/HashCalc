@@ -165,15 +165,15 @@ start:
 	Gui, Add, Text, xm y340 w760 h1 0x10
 	Gui, Add, Text, x5 y366 w100 h23 , Verify
 
-	Gui, Add, Edit, x115 y366 w390 h23 vVerify,
-	Gui, Add, Edit, x508 y366 w80 h23 0x800 vHashOK,
-	Gui, Add, Button, x598 y366 w90 h23 gloadFile, LoadFile
-	Gui, Add, Button, x688 y366 w90 h23 gClear, Clear
-	Gui, Add, Button, x598 y394 w180 h23 gClose, Close
+	Gui, Add, Edit, x115 y366 w570 h23 vVerify,
+	Gui, Add, Edit, x688 y366 w90 h23 0x800 vHashOK,
+	Gui, Add, Button, x598 y394 w90 h23 gloadFile, LoadFile
+	Gui, Add, Button, x688 y394 w90 h23 gClear, Clear
+	Gui, Add, Button, x598 y422 w180 h23 gClose, Close
 	Gui, Add, Checkbox, x5 y400 w350 h23 vReImage checked, Auto-Load highest hash file if exist.
 	Gui, Add, Text, x5 y425 w500 h21 , Made with AHK 2013-%A_YYYY%, jNizM
  and %author% %version%
-	Gui, Add, Text, x625 y435 w200 h21 , Escape will quit !
+	Gui, Add, Text, x5 y445 w200 h21 , Escape will quit !
 	Gui, Show, AutoSize, %title% %mode%
 
 	SetTimer, CheckEdit, 100
@@ -287,6 +287,25 @@ CheckEdit:
     GuiControl, % SHA2  = ""  ? "Disable" : "Enable",  CopySHA2
     GuiControl, % SHA3  = ""  ? "Disable" : "Enable",  CopySHA3
     GuiControl, % SHA5  = ""  ? "Disable" : "Enable",  CopySHA5
+
+    GuiControl, % CRC32 = ""  ? "Disable" : "Enable",  CreateCRC32
+    GuiControl, % MD2   = ""  ? "Disable" : "Enable",  CreateMD2
+    GuiControl, % MD4   = ""  ? "Disable" : "Enable",  CreateMD4
+    GuiControl, % MD5   = ""  ? "Disable" : "Enable",  CreateMD5
+    GuiControl, % SHA   = ""  ? "Disable" : "Enable",  CreateSHA
+    GuiControl, % SHA2  = ""  ? "Disable" : "Enable",  CreateSHA2
+    GuiControl, % SHA3  = ""  ? "Disable" : "Enable",  CreateSHA3
+    GuiControl, % SHA5  = ""  ? "Disable" : "Enable",  CreateSHA5
+
+    GuiControl, % CRC32 = ""  ? "Disable" : "Enable",  LoadCRC32
+    GuiControl, % MD2   = ""  ? "Disable" : "Enable",  LoadMD2
+    GuiControl, % MD4   = ""  ? "Disable" : "Enable",  LoadMD4
+    GuiControl, % MD5   = ""  ? "Disable" : "Enable",  LoadMD5
+    GuiControl, % SHA   = ""  ? "Disable" : "Enable",  LoadSHA
+    GuiControl, % SHA2  = ""  ? "Disable" : "Enable",  LoadSHA2
+    GuiControl, % SHA3  = ""  ? "Disable" : "Enable",  LoadSHA3
+    GuiControl, % SHA5  = ""  ? "Disable" : "Enable",  LoadSHA5
+
 return
 
 File:
