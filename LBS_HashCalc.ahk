@@ -5,14 +5,11 @@
 ;;	64 bit AHK version : 1.1.24.2 64 bit Unicode
 ;;	Use as a developpement tool for AHK
 ;;	This entire thing (work) is a developpement tool for AHK scripting.
-;;	Use an external EXE or DLL file for icon is shit load of job and the final quality is less.
-;;	Windows 10 have NO icons but is compatible
+;;	Futurs versions will not includes icons for compatibility with wine in linux
 
 ;;--- Softwares Variables ---
 
 	SetWorkingDir, %A_ScriptDir%
-	#Persistent
-	;; #Warn
 	#NoEnv
 
 	SetBatchLines, -1
@@ -22,20 +19,19 @@
 	SetEnv, title, LBS_HashCalc
 	SetEnv, name, LBS_HashCalc
 	SetEnv, mode, Verify hash files Creator and load from external file
-	SetEnv, version, Version 2018-03-25-1035
+	SetEnv, version, Version 2018-04-11-1952
 	SetEnv, Author, LostByteSoft
-	SetEnv, icofolder, C:\Program Files\Common Files
-	SetEnv, logoicon, ico_hash.ico
 	SetEnv, pause, 0
 	SetEnv, debug, 0
 	SetEnv, NoCalc, 1
-	SetEnv, NoIcons, 0
 	SetEnv, Loadhash, 0
 	SetEnv, reimage, 0
 	SetENv, clickfile, 0
+	SetEnv, icofolder, C:\Program Files\Common Files\
+	SetEnv, logoicon, ico_hash.ico
 
 	;; Specific Icons (or files)
-	FileInstall, ico_hash.ico, %icofolder%\ico_hash.ico, 0
+	FileInstall, SharedIcons\ico_hash.ico, %icofolder%\ico_hash.ico, 0
 
 	;; Common ico
 	FileInstall, SharedIcons\ico_about.ico, %icofolder%\ico_about.ico, 0
@@ -92,9 +88,7 @@
 	Menu, tray, add, 4 - Clear, Clear
 	menu, tray, add,
 	Menu, Tray, Tip, %mode%
-	IfEqual, noicons, 1, goto, skip11
-	Menu, Tray, Icon, %icofolder%\ico_hash.ico
-	skip11:
+	Menu, Tray, Icon, %icofolder%\%logoicon%
 
 ;;--- Software start here ---
 
@@ -196,7 +190,7 @@ Checkautoload:
 	SplitPath, Test,, Dir
 	SplitPath, Dir, Folder
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
-	IfEqual, debug, 1, msgbox, (Checkautoload 1 ) debug=%debug% :`n`nOutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
+	IfEqual, debug, 1, msgbox, BACK :`n`nOutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
 	Gui, Submit, NoHide
 	GuiControlGet, CheckSHA51,, CheckSHA5
 	GuiControlGet, CheckSHA31,, CheckSHA3
@@ -206,34 +200,46 @@ Checkautoload:
 	GuiControlGet, Checkmd41,, Checkmd4
 	GuiControlGet, Checkmd21,, Checkmd2
 	GuiControlGet, Checkcrc321,, Checkcrc32
-	IfEqual, debug, 1, msgbox, (Checkautoload 2 ) debug=%debug% : GuiControlGet : Checkcrc32=%Checkcrc321% Checkmd2=%Checkmd21% Checkmd4=%Checkmd41% Checkmd5=%Checkmd51% CheckSHA1=%CheckSHA11% CheckSHA2=%CheckSHA21% CheckSHA3=%CheckSHA31% CheckSHA5=%CheckSHA51%
-	IfEqual, CheckSHA51, 0, goto, next1
+	IfEqual, debug, 1, msgbox, Checkcrc32=%Checkcrc321% Checkmd2=%Checkmd21% Checkmd4=%Checkmd41% Checkmd5=%Checkmd51% CheckSHA1=%CheckSHA11% CheckSHA2=%CheckSHA21% CheckSHA3=%CheckSHA31% CheckSHA5=%CheckSHA51%
+
+	IfEqual, CheckSHA51, 0, goto, next0
 	IfExist, %dir%\%name_no_ext%.sha512, goto, ButtonLoadsha512
-	next1:
-	IfEqual, CheckSHA31, 0, goto, next2
+	next0:
+
+	IfEqual, CheckSHA31, 0, goto, next1
 	IfExist, %dir%\%name_no_ext%.sha384, goto, ButtonLoadsha384
+	next1:
+
+	IfEqual, CheckSHA21, 0, goto, next2
+	IfExist, %dir%\%name_no_ext%.sha256, goto, ButtonLoadsha256
 	next2:
+
 	IfEqual, CheckSHA11, 0, goto, next3
 	IfExist, %dir%\%name_no_ext%.sha1, goto, ButtonLoadsha1
 	next3:
-	IfEqual, Checkmd51, 0, goto, next4
+
+	IfEqual, CheckMD51, 0, goto, next4
 	IfExist, %dir%\%name_no_ext%.md5, goto, ButtonLoadMD5
 	next4:
-	IfEqual, CheckSHA41, 0, goto, next5
+
+	IfEqual, CheckMD41, 0, goto, next5
 	IfExist, %dir%\%name_no_ext%.md4, goto, ButtonLoadMD4
 	next5:
-	IfEqual, CheckSHA21, 0, goto, next6
+
+	IfEqual, CheckMD21, 0, goto, next6
 	IfExist, %dir%\%name_no_ext%.md2, goto, ButtonLoadMD2
 	next6:
+
 	IfEqual, Checkcrc321, 0, goto, next7
 	IfExist, %dir%\%name_no_ext%.crc32, goto, ButtonLoadcrc32
 	next7:
+
 	Return
 
 LoadFile:
 	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before loading a file !
 	IfEqual, NoCalc, 1, Return
-	FileSelectFile, OutputVar,2 ,, Select a file to load... (ESC to quit) HashCalc, (*.txt; *.crc32; *.md2; *.md4; *.md5; *.sha1; sha256; *.sha384; *.sha512)
+	FileSelectFile, OutputVar,2 ,, Select a file to load... (ESC to quit) HashCalc, (*.txt; *.crc32; *.md2; *.md4; *.md5; *.sha1; *.sha256; *.sha384; *.sha512)
 		if ErrorLevel
 			goto, Start
 	IfEqual, OutputVar, , Goto, start
@@ -241,9 +247,9 @@ LoadFile:
 	SplitPath, Test,, Dir
 	SplitPath, Dir, Folder
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
-	IfEqual, debug, 1, msgbox, (LoadFile 1 ) debug=%debug% :`n`nOutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
+	IfEqual, debug, 1, msgbox, BACK :`n`nOutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
 	FileReadLine, Loadhash, %OutputVar%, 1
-	IfEqual, debug, 1, msgbox, (LoadFile 2 ) debug=%debug% : LoadFile=%OutputVar% LoadHash=%Loadhash%
+	IfEqual, debug, 1, msgbox, LoadFile=%OutputVar% LoadHash=%Loadhash%
 	GuiControl,,Verify, %Loadhash%
 return
 
@@ -291,17 +297,10 @@ File:
 	return
 
 Calculate:
-	Gui, Submit, NoHide
-	GuiControlGet, Check,, Check
-	GuiControlGet, HMAC,, HMAC
-	;;IfEqual, hmac,, setenv, clickfile, 0
-	IfEqual, hmac,, goto, next150
-	IFEqual, check, 1, goto, next100
-	next150:
-	IfEqual, clickfile, 0, MsgBox, Load a file before calculate !
-	IfEqual, clickfile, 0, return
-	next100:
+	;;IfEqual, clickfile, 0, MsgBox, Load a file before calculate ! ; for hmac
+	;;IfEqual, clickfile, 0, return
 	SetEnv, NoCalc, 0
+	Gui, Submit, NoHide
 		GuiControl,, CRC32, % ((CheckCRC32 = "1") ? ((DDL = "1") ? ((Check = "0") ? (CRC32(Str))  : "")                          : ((DDL = "2") ? (HexCRC32(Str))  : (FileCRC32(Str))))  : (""))
 		GuiControl,, MD2,   % ((CheckMD2   = "1") ? ((DDL = "1") ? ((Check = "0") ? (MD2(Str))    : (HMAC(HMAC, Str, "MD2")))    : ((DDL = "2") ? (HexMD2(Str))    : (FileMD2(Str))))    : (""))
 		GuiControl,, MD4,   % ((CheckMD4   = "1") ? ((DDL = "1") ? ((Check = "0") ? (MD4(Str))    : (HMAC(HMAC, Str, "MD4")))    : ((DDL = "2") ? (HexMD4(Str))    : (FileMD4(Str))))    : (""))
@@ -311,7 +310,7 @@ Calculate:
 		GuiControl,, SHA3,  % ((CheckSHA3  = "1") ? ((DDL = "1") ? ((Check = "0") ? (SHA384(Str)) : (HMAC(HMAC, Str, "SHA384"))) : ((DDL = "2") ? (HexSHA384(Str)) : (FileSHA384(Str)))) : (""))
 		GuiControl,, SHA5,  % ((CheckSHA5  = "1") ? ((DDL = "1") ? ((Check = "0") ? (SHA512(Str)) : (HMAC(HMAC, Str, "SHA512"))) : ((DDL = "2") ? (HexSHA512(Str)) : (FileSHA512(Str)))) : (""))
 	GuiControlGet, ReImage,, Reimage
-	IfEqual, debug, 1, msgbox, (Calculate) debug=%debug% : reimage=%reimage% : reimage is auto load hash files
+	IfEqual, debug, 1, msgbox, (Calculate) reimage=%reimage%
 	IfEqual, reimage, 1, goto, Checkautoload
 return
 
@@ -706,9 +705,8 @@ ButtonCreateCRC32:
 	;; Var = CRC32
 	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before create a file !
 	IfEqual, NoCalc, 1, Return
-	GuiControlGet, Checkcrc32,, Checkcrc32
-	IfEqual, debug, 1, MsgBox, Checkcrc32=%Checkcrc32% File=%file%
-	IfEqual, Checkcrc32, 0, return
+    	GuiControlGet, CRC32,, CRC32
+	IfEqual, debug, 1, MsgBox, CRC32=%CRC32% File=%file%
 	OutputVar := file
 	SplitPath, File,, Dir
 	SplitPath, Dir, Folder
@@ -726,9 +724,8 @@ ButtonCreateMD2:
 	;; Var = MD2
 	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before create a file !
 	IfEqual, NoCalc, 1, Return
-    	GuiControlGet, Checkmd2,, Checkmd2
-	IfEqual, debug, 1, MsgBox, CheckMD2=%CheckMD2% File=%file%
-	IfEqual, Checkmd2, 0, return
+    	GuiControlGet, MD2,, MD2
+	IfEqual, debug, 1, MsgBox, MD2=%MD2% File=%file%
 	OutputVar := file
 	SplitPath, File,, Dir
 	SplitPath, Dir, Folder
@@ -746,9 +743,8 @@ ButtonCreateMD4:
 	;; Var = MD4
 	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before create a file !
 	IfEqual, NoCalc, 1, Return
-    	GuiControlGet, Checkmd4,, Checkmd4
-	IfEqual, debug, 1, MsgBox, Checkmd4=%Checkmd4% File=%file%
-	IfEqual, Checkmd4, 0, return
+    	GuiControlGet, MD4,, MD4
+	IfEqual, debug, 1, MsgBox, MD4=%MD4% File=%file%
 	OutputVar := file
 	SplitPath, File,, Dir
 	SplitPath, Dir, Folder
@@ -766,9 +762,8 @@ ButtonCreateMD5:
 	;; Var = MD5
 	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before create a file !
 	IfEqual, NoCalc, 1, Return
-    	GuiControlGet, Checkmd5,, Checkmd5
-	IfEqual, debug, 1, MsgBox, Checkmd5=%Checkmd5% File=%file%
-	IfEqual, Checkmd5, 0, return
+    	GuiControlGet, MD5,, MD5
+	IfEqual, debug, 1, MsgBox, MD5=%MD5% File=%file%
 	OutputVar := file
 	SplitPath, File,, Dir
 	SplitPath, Dir, Folder
@@ -786,9 +781,8 @@ ButtonCreateSHA1:
 	;; Var = SHA
 	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before create a file !
 	IfEqual, NoCalc, 1, Return
-    	GuiControlGet, Checksha,, Checksha
-	IfEqual, debug, 1, MsgBox, Checksha=%Checksha% File=%file%
-	IfEqual, Checksha, 0, return
+    	GuiControlGet, SHA,, SHA
+	IfEqual, debug, 1, MsgBox, SHA=%SHA% File=%file%
 	OutputVar := file
 	SplitPath, File,, Dir
 	SplitPath, Dir, Folder
@@ -806,9 +800,8 @@ ButtonCreateSHA256:
 	;; Var = SHA256
 	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before create a file !
 	IfEqual, NoCalc, 1, Return
-    	GuiControlGet, Checksha2,, Checksha2
-	IfEqual, debug, 1, MsgBox, Checksha2=%Checksha2% File=%file%
-	IfEqual, Checksha2, 0, return
+    	GuiControlGet, SHA2,, SHA2
+	IfEqual, debug, 1, MsgBox, SHA256=%SHA2% File=%file%
 	OutputVar := file
 	SplitPath, File,, Dir
 	SplitPath, Dir, Folder
@@ -826,9 +819,8 @@ ButtonCreateSHA384:
 	;; Var = SHA384
 	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before create a file !
 	IfEqual, NoCalc, 1, Return
-    	GuiControlGet, Checksha3,, Checksha3
-	IfEqual, debug, 1, MsgBox, Checksha3=%Checksha3% File=%file%
-	IfEqual, Checksha3, 0, return
+    	GuiControlGet, SHA3,, SHA3
+	IfEqual, debug, 1, MsgBox, SHA384=%SHA3% File=%file%
 	OutputVar := file
 	SplitPath, File,, Dir
 	SplitPath, Dir, Folder
@@ -846,9 +838,8 @@ ButtonCreateSHA512:
 	;; Var = SHA512
 	IfEqual, NoCalc, 1, MsgBox, Calculate Hash before create a file !
 	IfEqual, NoCalc, 1, Return
-    	GuiControlGet, Checksha5,, Checksha5
-	IfEqual, debug, 1, MsgBox, Checksha5=%Checksha5% File=%file%
-	IfEqual, Checksha5, 0, return
+    	GuiControlGet, SHA5,, SHA5
+	IfEqual, debug, 1, MsgBox, SHA512=%SHA5% File=%file%
 	OutputVar := file
 	SplitPath, File,, Dir
 	SplitPath, Dir, Folder
@@ -960,7 +951,6 @@ Debug:
 
 	enable:
 		SetEnv, debug, 1
-		Gui, destroy
 		TrayTip, %title%, Activated ! debug=%debug%, 1, 2
 		Goto, start
 
@@ -1026,9 +1016,7 @@ Author:
 	Return
 
 GuiLogo:
-	IfNotExist, %icofolder%\%logoicon%, goto, skiplogoicon
 	Gui, 4:Add, Picture, x25 y25 w400 h400, %icofolder%\%logoicon%
-	skiplogoicon:
 	Gui, 4:Show, w450 h450, %title% Logo
 	Gui, 4:Color, 000000
 	Gui, 4:-MinimizeBox
