@@ -1,11 +1,10 @@
 ;;--- Head --- Informations --- AHK ---
 
-;;	Compatibility: Windows Xp , Windows Vista , Windows 7 , Windows 8
+;;	Compatibility: Windows Xp , Windows Vista , Windows 7 , Windows 8 , Windows 10
 ;;	All files must be in same folder. Where you want.
 ;;	64 bit AHK version : 1.1.24.2 64 bit Unicode
 ;;	Use as a developpement tool for AHK
 ;;	This entire thing (work) is a developpement tool for AHK scripting.
-;;	Futurs versions will not includes icons for compatibility with wine in linux
 
 ;;--- Softwares Variables ---
 
@@ -19,7 +18,7 @@
 	SetEnv, title, LBS_HashCalc
 	SetEnv, name, LBS_HashCalc
 	SetEnv, mode, Verify hash files Creator and load from external file
-	SetEnv, version, Version 2018-04-11-1952
+	SetEnv, version, Version 2018-05-02-1635
 	SetEnv, Author, LostByteSoft
 	SetEnv, pause, 0
 	SetEnv, debug, 0
@@ -27,11 +26,12 @@
 	SetEnv, Loadhash, 0
 	SetEnv, reimage, 0
 	SetENv, clickfile, 0
+	SetEnv, DisplayTime, 0
 	SetEnv, icofolder, C:\Program Files\Common Files\
 	SetEnv, logoicon, ico_hash.ico
 
 	;; Specific Icons (or files)
-	FileInstall, SharedIcons\ico_hash.ico, %icofolder%\ico_hash.ico, 0
+	FileInstall, ico_hash.ico, %icofolder%\ico_hash.ico, 0
 
 	;; Common ico
 	FileInstall, SharedIcons\ico_about.ico, %icofolder%\ico_about.ico, 0
@@ -85,7 +85,7 @@
 	Menu, tray, add, 1 - File, File
 	Menu, tray, add, 2 - Calculate, Calculate
 	Menu, tray, add, 3 - Load File, LoadFile
-	Menu, tray, add, 4 - Clear, Clear
+	Menu, tray, add, 4 - Clear_All, Clear_All
 	menu, tray, add,
 	Menu, Tray, Tip, %mode%
 	Menu, Tray, Icon, %icofolder%\%logoicon%
@@ -101,14 +101,14 @@ start:
 
 	Gui, Add, Text, x145 y5 w90 h15 , Path file:
 	Gui, Add, Text, x465 y5 w350 h15 , Don't forget: bigger file must use more ram.
+
 	Gui, Add, DropDownList, x5 y26 AltSubmit vDDL choose1, Text String|Hex|File
 	Gui, Add, Edit, x160 y26 w425 h23  vStr,
 	Gui, Add, Button, x598 y26 w180 h23 gFile vFile, File
-
 	Gui, Add, Checkbox, x5 y55 w100 h23 vCheck, HMAC
 	Gui, Add, Edit, x115 y55 w390 h23 vHMAC,
 
-	Gui, Add, Button, x598 y55 w180 h23 gCalculate, Calculate
+	Gui, Add, Button, x598 y55 w180 h43 gCalculate, Calculate
 
 	Gui, Add, Text, x115 y80 w65 h15 , Hash:
 	Gui, Add, Text, x515 y80 w65 h15 , Clipboard
@@ -126,11 +126,13 @@ start:
 	Gui, Add, Button, x508 y128 w80 h23 gCopyMD2 vCopyMD2, Copy
 	Gui, Add, Button, x598 y128 w90 h23, CreateMD2
 	Gui, Add, Button, x688 y128 w90 h23, LoadMD2
+
 	Gui, Add, Checkbox, x5 y157 w100 h23 vCheckMD4, MD4
 	Gui, Add, Edit, x115 y157 w390 h23 0x800 vMD4,
 	Gui, Add, Button, x508 y157 w80 h23 gCopyMD4 vCopyMD4, Copy
 	Gui, Add, Button, x598 y157 w90 h23, CreateMD4
 	Gui, Add, Button, x688 y157 w90 h23, LoadMD4
+
 	Gui, Add, Checkbox, x5 y186 w100 h23 Checked vCheckMD5, MD5
 
 	Gui, Add, Edit, x115 y186 w390 h23 0x800 vMD5, 
@@ -138,7 +140,9 @@ start:
 	Gui, Add, Button, x508 y186 w80 h23 gCopyMD5 vCopyMD5, Copy
 	Gui, Add, Button, x598 y186 w90 h23, CreateMD5
 	Gui, Add, Button, x688 y186 w90 h23, LoadMD5
-	Gui, Add, Checkbox, x5 y215 w100 h23 Checked vCheckSHA, SHA-1
+
+	;;Gui, Add, Checkbox, x5 y215 w100 h23 Checked vCheckSHA, SHA-1
+	Gui, Add, Checkbox, x5 y215 w100 h23 vCheckSHA, SHA-1
 	Gui, Add, Edit, x115 y215 w390 h23 0x800 vSHA,
 	Gui, Add, Button, x508 y215 w80 h23 gCopySHA vCopySHA, Copy
 	Gui, Add, Button, x598 y215 w90 h23, CreateSHA1
@@ -167,14 +171,20 @@ start:
 
 	Gui, Add, Edit, x115 y366 w570 h23 vVerify,
 	Gui, Add, Edit, x688 y366 w90 h23 0x800 vHashOK,
+
 	Gui, Add, Button, x598 y394 w90 h23 gloadFile, LoadFile
 	Gui, Add, Button, x688 y394 w90 h23 gClear, Clear
-	Gui, Add, Button, x598 y422 w180 h23 gClose, Close
+	Gui, Add, Button, x598 y422 w180 h43 gClose, Close
 	Gui, Add, Checkbox, x5 y400 w350 h23 vReImage checked, Auto-Load highest hash file if exist.
 	Gui, Add, Text, x5 y425 w500 h21 , Made with AHK 2013-%A_YYYY%, jNizM
  and %author% %version%
-	Gui, Add, Text, x5 y445 w200 h21 , Escape will quit !
-	Gui, Show, AutoSize, %title% %mode%
+	Gui, Add, Text, x5 y445 w200 h21 , Escape will quit !
+
+	Gui, Add, Text, x250 y445 w150 h21 , Elapsed time :
+	Gui, Add, Text, x375 y445 w50 h21 vDisplayTime, %DisplayTime%
+	Gui, Add, Text, x450 y445 w90 h21 , milliseconds
+
+	Gui, Show, AutoSize, %title% %mode% (Files larger than 4 gib take very long time)
 
 	SetTimer, CheckEdit, 100
 	SetTimer, VerifyHash, 200
@@ -184,6 +194,8 @@ start:
 ;;--- Gui buttons & control ---
 
 Checkautoload:
+	DisplayTime := A_TickCount - StartTime
+	GuiControl, , DisplayTime, %DisplayTime%
 	;;MsgBox, (Checkautoload) File=%File%
 	OutputVar := file
 	Test := file
@@ -241,8 +253,8 @@ LoadFile:
 	IfEqual, NoCalc, 1, Return
 	FileSelectFile, OutputVar,2 ,, Select a file to load... (ESC to quit) HashCalc, (*.txt; *.crc32; *.md2; *.md4; *.md5; *.sha1; *.sha256; *.sha384; *.sha512)
 		if ErrorLevel
-			goto, Start
-	IfEqual, OutputVar, , Goto, start
+			goto, reload
+	;;IfEqual, OutputVar, , goto, reload
 	Test := OutputVar
 	SplitPath, Test,, Dir
 	SplitPath, Dir, Folder
@@ -251,13 +263,18 @@ LoadFile:
 	FileReadLine, Loadhash, %OutputVar%, 1
 	IfEqual, debug, 1, msgbox, LoadFile=%OutputVar% LoadHash=%Loadhash%
 	GuiControl,,Verify, %Loadhash%
-return
+	Return
+
+	reload:
+	gui, destroy
+	goto, start
 
 GuiDropFiles:
     FilePath := A_GuiEvent
     GuiControl,, Str, % FilePath
     GuiControl, Choose, DDL, 3
-return
+	SetENv, clickfile, 1
+	return
 
 CheckEdit:
     Gui, Submit, NoHide
@@ -305,8 +322,7 @@ CheckEdit:
     GuiControl, % SHA2  = ""  ? "Disable" : "Enable",  LoadSHA2
     GuiControl, % SHA3  = ""  ? "Disable" : "Enable",  LoadSHA3
     GuiControl, % SHA5  = ""  ? "Disable" : "Enable",  LoadSHA5
-
-return
+	return
 
 File:
 	SetENv, clickfile, 1
@@ -316,6 +332,7 @@ File:
 	return
 
 Calculate:
+	StartTime := A_TickCount
 	;;IfEqual, clickfile, 0, MsgBox, Load a file before calculate ! ; for hmac
 	;;IfEqual, clickfile, 0, return
 	SetEnv, NoCalc, 0
@@ -329,11 +346,12 @@ Calculate:
 		GuiControl,, SHA3,  % ((CheckSHA3  = "1") ? ((DDL = "1") ? ((Check = "0") ? (SHA384(Str)) : (HMAC(HMAC, Str, "SHA384"))) : ((DDL = "2") ? (HexSHA384(Str)) : (FileSHA384(Str)))) : (""))
 		GuiControl,, SHA5,  % ((CheckSHA5  = "1") ? ((DDL = "1") ? ((Check = "0") ? (SHA512(Str)) : (HMAC(HMAC, Str, "SHA512"))) : ((DDL = "2") ? (HexSHA512(Str)) : (FileSHA512(Str)))) : (""))
 	GuiControlGet, ReImage,, Reimage
-	IfEqual, debug, 1, msgbox, (Calculate) reimage=%reimage%
+	IfEqual, debug, 1, msgbox, (Calculate) NoCalc = %NoCalc% reimage = %reimage%
 	IfEqual, reimage, 1, goto, Checkautoload
-return
+	return
 
 Clear:
+Clear_All:
     GuiControl,, Str,
     GuiControl,, HMAC,
     GuiControl,, CRC32,
@@ -350,51 +368,48 @@ Clear:
 	SetEnv, Loadhash, 0
 	SetEnv, reimage, 0
 	SetENv, clickfile, 0
-return
+	return
 
 VerifyHash:
     Gui, Submit, NoHide
     Result := Hashify(Verify, CRC32, MD2, MD4, MD5, SHA, SHA2, SHA3, SHA5)
     GuiControl, % (InStr(Result, "OK") ? "+c008000" : "+c800000"), HashOK
     GuiControl,, HashOk, %Result%
-return
+	return
 
 CopyCRC32:
     Clipboard := CRC32
-return
+	return
 
 CopyMD2:
     Clipboard := MD2
-return
+	return
 
 CopyMD4:
     Clipboard := MD4
-return
+	return
 
 CopyMD5:
     Clipboard := MD5
-return
+	return
 
 CopySHA:
     Clipboard := SHA
-return
+	return
 
 CopySHA2:
     Clipboard := SHA2
-return
+	return
 
 CopySHA3:
     Clipboard := SHA3
-return
+	return
 
 CopySHA5:
     Clipboard := SHA5
-return
-
+	return
 
 ;;--- Functions ---
-
-
 ; FUNCTIONS =========================================================================
 
 ; Verify ============================================================================
@@ -731,11 +746,11 @@ ButtonCreateCRC32:
 	SplitPath, Dir, Folder
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
 	IfEqual, debug, 1, msgbox, File=%file%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
-	IfExist, %Dir%\%name_no_ext%.CRC32, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.CRC32 exist ! overwrite ?
+	IfExist, %Dir%\%name_no_ext%.crc32, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.crc32 exist ! overwrite ?
 	IfMsgBox, No, goto, skipCRC32
-	FileDelete, %Dir%\%name_no_ext%.CRC32
-	FileAppend, %CRC32%, %Dir%\%name_no_ext%.CRC32
-	MsgBox, File %Dir%\%name_no_ext%.CRC32 was created !
+	FileDelete, %Dir%\%name_no_ext%.crc32
+	FileAppend, %CRC32%, %Dir%\%name_no_ext%.crc32
+	MsgBox, File %Dir%\%name_no_ext%.crc32 was created !
 	skipCRC32:
 return
 
@@ -750,11 +765,11 @@ ButtonCreateMD2:
 	SplitPath, Dir, Folder
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
 	IfEqual, debug, 1, msgbox, File=%file%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
-	IfExist, %Dir%\%name_no_ext%.MD2, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.MD2 exist ! overwrite ?
+	IfExist, %Dir%\%name_no_ext%.md2, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.md2 exist ! overwrite ?
 	IfMsgBox, No, goto, skipMD2
-	FileDelete, %Dir%\%name_no_ext%.MD2
-	FileAppend, %MD2%, %Dir%\%name_no_ext%.MD2
-	MsgBox, File %Dir%\%name_no_ext%.MD2 was created !
+	FileDelete, %Dir%\%name_no_ext%.md2
+	FileAppend, %MD2%, %Dir%\%name_no_ext%.md2
+	MsgBox, File %Dir%\%name_no_ext%.md2 was created !
 	skipMD2:
 return
 
@@ -769,11 +784,11 @@ ButtonCreateMD4:
 	SplitPath, Dir, Folder
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
 	IfEqual, debug, 1, msgbox, File=%file%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
-	IfExist, %Dir%\%name_no_ext%.MD4, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.MD4 exist ! overwrite ?
+	IfExist, %Dir%\%name_no_ext%.md4, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.md4 exist ! overwrite ?
 	IfMsgBox, No, goto, skipMD4
-	FileDelete, %Dir%\%name_no_ext%.MD4
-	FileAppend, %MD4%, %Dir%\%name_no_ext%.MD4
-	MsgBox, File %Dir%\%name_no_ext%.MD4 was created !
+	FileDelete, %Dir%\%name_no_ext%.md4
+	FileAppend, %MD4%, %Dir%\%name_no_ext%.md4
+	MsgBox, File %Dir%\%name_no_ext%.md4 was created !
 	skipMD4:
 return
 
@@ -807,11 +822,11 @@ ButtonCreateSHA1:
 	SplitPath, Dir, Folder
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
 	IfEqual, debug, 1, msgbox, File=%file%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
-	IfExist, %Dir%\%name_no_ext%.SHA1, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.SHA1 exist ! overwrite ?
+	IfExist, %Dir%\%name_no_ext%.sha1, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.sha1 exist ! overwrite ?
 	IfMsgBox, No, goto, skipSHA
-	FileDelete, %Dir%\%name_no_ext%.SHA1
-	FileAppend, %SHA%, %Dir%\%name_no_ext%.SHA1
-	MsgBox, File %Dir%\%name_no_ext%.SHA1 was created !
+	FileDelete, %Dir%\%name_no_ext%.sha1
+	FileAppend, %SHA%, %Dir%\%name_no_ext%.sha1
+	MsgBox, File %Dir%\%name_no_ext%.sha1 was created !
 	skipSHA:
 return
 
@@ -826,11 +841,11 @@ ButtonCreateSHA256:
 	SplitPath, Dir, Folder
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
 	IfEqual, debug, 1, msgbox, File=%file%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
-	IfExist, %Dir%\%name_no_ext%.SHA256, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.SHA256 exist ! overwrite ?
+	IfExist, %Dir%\%name_no_ext%.sha256, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.sha256 exist ! overwrite ?
 	IfMsgBox, No, goto, skipSHA256
-	FileDelete, %Dir%\%name_no_ext%.SHA256
-	FileAppend, %SHA2%, %Dir%\%name_no_ext%.SHA256
-	MsgBox, File %Dir%\%name_no_ext%.SHA256 was created !
+	FileDelete, %Dir%\%name_no_ext%.sha256
+	FileAppend, %SHA2%, %Dir%\%name_no_ext%.sha256
+	MsgBox, File %Dir%\%name_no_ext%.sha256 was created !
 	skipSHA256:
 return
 
@@ -845,11 +860,11 @@ ButtonCreateSHA384:
 	SplitPath, Dir, Folder
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
 	IfEqual, debug, 1, msgbox, File=%file%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
-	IfExist, %Dir%\%name_no_ext%.SHA384, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.SHA384 exist ! overwrite ?
+	IfExist, %Dir%\%name_no_ext%.sha384, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.sha384 exist ! overwrite ?
 	IfMsgBox, No, goto, skipSHA384
-	FileDelete, %Dir%\%name_no_ext%.SHA384
-	FileAppend, %SHA3%, %Dir%\%name_no_ext%.SHA384
-	MsgBox, File %Dir%\%name_no_ext%.SHA384 was created !
+	FileDelete, %Dir%\%name_no_ext%.sha384
+	FileAppend, %SHA3%, %Dir%\%name_no_ext%.sha384
+	MsgBox, File %Dir%\%name_no_ext%.sha384 was created !
 	skipSHA384:
 return
 
@@ -864,11 +879,11 @@ ButtonCreateSHA512:
 	SplitPath, Dir, Folder
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
 	IfEqual, debug, 1, msgbox, File=%file%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
-	IfExist, %Dir%\%name_no_ext%.SHA512, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.SHA512 exist ! overwrite ?
+	IfExist, %Dir%\%name_no_ext%.sha512, MsgBox, 36, %title%, File %Dir%\%name_no_ext%.sha512 exist ! overwrite ?
 	IfMsgBox, No, goto, skipSHA512
-	FileDelete, %Dir%\%name_no_ext%.SHA512
-	FileAppend, %SHA5%, %Dir%\%name_no_ext%.SHA512
-	MsgBox, File %Dir%\%name_no_ext%.SHA512 was created !
+	FileDelete, %Dir%\%name_no_ext%.sha512
+	FileAppend, %SHA5%, %Dir%\%name_no_ext%.sha512
+	MsgBox, File %Dir%\%name_no_ext%.sha512 was created !
 	skipSHA512:
 return
 
@@ -881,7 +896,7 @@ ButtonLoadCRC32:
 	OutputVar := file
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
 	IfEqual, debug, 1,msgbox, OutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
-	FileReadLine, Loadhash, %dir%\%name_no_ext%.CRC32, 1
+	FileReadLine, Loadhash, %dir%\%name_no_ext%.crc32, 1
 	GuiControl,,Verify, %Loadhash%
 return
 
@@ -925,7 +940,7 @@ ButtonLoadSHA1:
 	OutputVar := file
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
 	IfEqual, debug, 1,msgbox, OutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
-	FileReadLine, Loadhash, %dir%\%name_no_ext%.SHA1, 1
+	FileReadLine, Loadhash, %dir%\%name_no_ext%.sha1, 1
 	GuiControl,,Verify, %Loadhash%
 return
 
@@ -936,7 +951,7 @@ ButtonLoadSHA256:
 	OutputVar := file
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
 	IfEqual, debug, 1,msgbox, OutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
-	FileReadLine, Loadhash, %dir%\%name_no_ext%.SHA256, 1
+	FileReadLine, Loadhash, %dir%\%name_no_ext%.sha256, 1
 	GuiControl,,Verify, %Loadhash%
 return
 
@@ -947,7 +962,7 @@ ButtonLoadSHA384:
 	OutputVar := file
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
 	IfEqual, debug, 1,msgbox, OutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
-	FileReadLine, Loadhash, %dir%\%name_no_ext%.SHA384, 1
+	FileReadLine, Loadhash, %dir%\%name_no_ext%.sha384, 1
 	GuiControl,,Verify, %Loadhash%
 return
 
@@ -958,7 +973,7 @@ ButtonLoadSHA512:
 	OutputVar := file
 	SplitPath, OutputVar, name, dir, ext, name_no_ext, drive
 	IfEqual, debug, 1,msgbox, OutputVar=%OutputVar%`n`ndir=%dir%`n`next=%ext%`n`ndrive=%drive%`n`nname_no_ext=%name_no_ext%`n`nname=%name%`n`nIf in Folder=%folder%
-	FileReadLine, Loadhash, %dir%\%name_no_ext%.SHA512, 1
+	FileReadLine, Loadhash, %dir%\%name_no_ext%.sha512, 1
 	GuiControl,,Verify, %Loadhash%
 return
 
