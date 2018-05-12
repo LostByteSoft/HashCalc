@@ -69,6 +69,9 @@ OR
 
 THIS IS A FORKED WORK FROM jNizM
 
+
 18 553 bytes original jNizm
+
 38 575 bytes LostByteSoft (version 2018-03-18)
+
 39 502 bytes LostByteSoft (version 2018-03-25)
