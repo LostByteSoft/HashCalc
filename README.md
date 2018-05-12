@@ -74,4 +74,4 @@ THIS IS A FORKED WORK FROM jNizM
 
 38 575 bytes LostByteSoft (version 2018-03-18)
 
-39 502 bytes LostByteSoft (version 2018-03-25)
+40 835 bytes LostByteSoft (version 2018-05-11)
