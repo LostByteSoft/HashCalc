@@ -3,8 +3,8 @@
 ;;	Compatibility: Windows Xp , Windows Vista , Windows 7 , Windows 8 , Windows 10
 ;;	All files must be in same folder. Where you want.
 ;;	64 bit AHK version : 1.1.24.2 64 bit Unicode
-;;	Use as a developpement tool for AHK
-;;	This entire thing (work) is a developpement tool for AHK scripting.
+
+;;	mod and bug tracking
 
 ;;--- Softwares Variables ---
 
@@ -18,7 +18,7 @@
 	SetEnv, title, LBS_HashCalc
 	SetEnv, name, LBS_HashCalc
 	SetEnv, mode, Verify hash files Creator and load from external file
-	SetEnv, version, Version 2018-05-02-1635
+	SetEnv, version, Version 2018-05-11-2334
 	SetEnv, Author, LostByteSoft
 	SetEnv, pause, 0
 	SetEnv, debug, 0
@@ -167,9 +167,9 @@ start:
 	Gui, Add, Button, x688 y302 w90 h23, LoadSHA512
 
 	Gui, Add, Text, xm y340 w760 h1 0x10
-	Gui, Add, Text, x5 y366 w100 h23 , Verify
+	Gui, Add, Text, x5 y346 w100 h23 , Verify
 
-	Gui, Add, Edit, x115 y366 w570 h23 vVerify,
+	Gui, Add, Edit, x5 y366 w680 h23 vVerify,
 	Gui, Add, Edit, x688 y366 w90 h23 0x800 vHashOK,
 
 	Gui, Add, Button, x598 y394 w90 h23 gloadFile, LoadFile
