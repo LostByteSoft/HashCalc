@@ -1,6 +1,6 @@
 ;;--- Head --- Informations --- AHK ---
 
-;;	Compatibility: Windows Xp , Windows Vista , Windows 7 , Windows 8 , Windows 10
+;;	Compatibility 64 BIT ONLY : Windows Xp , Windows Vista , Windows 7 , Windows 8 , Windows 8.1 ,Windows 10
 ;;	All files must be in same folder. Where you want.
 ;;	64 bit AHK version : 1.1.24.2 64 bit Unicode
 
@@ -18,7 +18,8 @@
 	SetEnv, title, LBS_HashCalc
 	SetEnv, name, LBS_HashCalc
 	SetEnv, mode, Verify hash files Creator and load from external file
-	SetEnv, version, Version 2018-05-11-2334
+	;; SetEnv, version, Version 2021-01-21-2042
+	SetEnv, version, Version %A_YYYY%-%A_MM%-%A_dd%-%A_Hour%%A_Min%	; at compilation the version is autoset
 	SetEnv, Author, LostByteSoft
 	SetEnv, pause, 0
 	SetEnv, debug, 0
@@ -99,97 +100,94 @@ start:
 	Gui, Font, s9, Courier New
 	Gui, Add, Text, x5 y5 w100 h15 , Data Format:
 
-	Gui, Add, Text, x145 y5 w90 h15 , Path file:
-	Gui, Add, Text, x465 y5 w350 h15 , Don't forget: bigger file must use more ram.
+	Gui, Add, Text, x165 y5 w150 h15 , Path file (Hex, Text) :
+	Gui, Add, Text, x625 y5 w250 h15 , Don't forget: bigger file use more ram.
 
 	Gui, Add, DropDownList, x5 y26 AltSubmit vDDL choose1, Text String|Hex|File
-	Gui, Add, Edit, x160 y26 w425 h23  vStr,
-	Gui, Add, Button, x598 y26 w180 h23 gFile vFile, File
+	Gui, Add, Edit, x160 y26 w730 h23  vStr,		; path file lenght
 	Gui, Add, Checkbox, x5 y55 w100 h23 vCheck, HMAC
-	Gui, Add, Edit, x115 y55 w390 h23 vHMAC,
-
-	Gui, Add, Button, x598 y55 w180 h43 gCalculate, Calculate
+	Gui, Add, Edit, x115 y55 w400 h23 vHMAC,
 
 	Gui, Add, Text, x115 y80 w65 h15 , Hash:
-	Gui, Add, Text, x515 y80 w65 h15 , Clipboard
+	Gui, Add, Text, x615 y80 w65 h15 , Clipboard
 
-	Gui, Add, Checkbox, x5 y99 w100 h23 vCheckCRC32, CRC32
+	Gui, Add, Button, x700 y55 w90 h43 gFile vFile, 1-File
+	Gui, Add, Button, x800 y55 w90 h43 gCalculate, 2-Calculate
 
-	Gui, Add, Edit, x115 y99 w390 h23 0x800 vCRC32, 
+	Gui, Add, Checkbox, x5 y99 w100 h23 Checked vCheckCRC32, CRC32
+	Gui, Add, Edit, x115 y99 w490 h23 0x800 vCRC32, 
+	Gui, Add, Button, x610 y99 w80 h23 gCopyCRC32 vCopyCRC32, Copy
+	Gui, Add, Button, x700 y99 w90 h23, CreateCRC32
+	Gui, Add, Button, x800 y99 w90 h23, LoadCRC32
 
-	Gui, Add, Button, x508 y99 w80 h23 gCopyCRC32 vCopyCRC32, Copy
-	Gui, Add, Button, x598 y99 w90 h23, CreateCRC32
-	Gui, Add, Button, x688 y99 w90 h23, LoadCRC32
 	Gui, Add, Checkbox, x5 y128 w100 h23 vCheckMD2, MD2
-	Gui, Add, Edit, x115 y128 w390 h23 0x800 vMD2, 
-
-	Gui, Add, Button, x508 y128 w80 h23 gCopyMD2 vCopyMD2, Copy
-	Gui, Add, Button, x598 y128 w90 h23, CreateMD2
-	Gui, Add, Button, x688 y128 w90 h23, LoadMD2
+	Gui, Add, Edit, x115 y128 w490 h23 0x800 vMD2, 
+	Gui, Add, Button, x610 y128 w80 h23 gCopyMD2 vCopyMD2, Copy
+	Gui, Add, Button, x700 y128 w90 h23, CreateMD2
+	Gui, Add, Button, x800 y128 w90 h23, LoadMD2
 
 	Gui, Add, Checkbox, x5 y157 w100 h23 vCheckMD4, MD4
-	Gui, Add, Edit, x115 y157 w390 h23 0x800 vMD4,
-	Gui, Add, Button, x508 y157 w80 h23 gCopyMD4 vCopyMD4, Copy
-	Gui, Add, Button, x598 y157 w90 h23, CreateMD4
-	Gui, Add, Button, x688 y157 w90 h23, LoadMD4
+	Gui, Add, Edit, x115 y157 w490 h23 0x800 vMD4,
+	Gui, Add, Button, x610 y157 w80 h23 gCopyMD4 vCopyMD4, Copy
+	Gui, Add, Button, x700 y157 w90 h23, CreateMD4
+	Gui, Add, Button, x800 y157 w90 h23, LoadMD4
 
-	Gui, Add, Checkbox, x5 y186 w100 h23 Checked vCheckMD5, MD5
-
-	Gui, Add, Edit, x115 y186 w390 h23 0x800 vMD5, 
-
-	Gui, Add, Button, x508 y186 w80 h23 gCopyMD5 vCopyMD5, Copy
-	Gui, Add, Button, x598 y186 w90 h23, CreateMD5
-	Gui, Add, Button, x688 y186 w90 h23, LoadMD5
+	;Gui, Add, Checkbox, x5 y186 w100 h23 Checked vCheckMD5, MD5
+	Gui, Add, Checkbox, x5 y186 w100 h23 vCheckMD5, MD5
+	Gui, Add, Edit, x115 y186 w490 h23 0x800 vMD5, 
+	Gui, Add, Button, x610 y186 w80 h23 gCopyMD5 vCopyMD5, Copy
+	Gui, Add, Button, x700 y186 w90 h23, CreateMD5
+	Gui, Add, Button, x800 y186 w90 h23, LoadMD5
 
 	;;Gui, Add, Checkbox, x5 y215 w100 h23 Checked vCheckSHA, SHA-1
 	Gui, Add, Checkbox, x5 y215 w100 h23 vCheckSHA, SHA-1
-	Gui, Add, Edit, x115 y215 w390 h23 0x800 vSHA,
-	Gui, Add, Button, x508 y215 w80 h23 gCopySHA vCopySHA, Copy
-	Gui, Add, Button, x598 y215 w90 h23, CreateSHA1
-	Gui, Add, Button, x688 y215 w90 h23, LoadSHA1
-	Gui, Add, Checkbox, x5 y244 w100 h23 vCheckSHA2, SHA-256
-	Gui, Add, Edit, x115 y244 w390 h23 0x800 vSHA2, 
+	Gui, Add, Edit, x115 y215 w490 h23 0x800 vSHA,
+	Gui, Add, Button, x610 y215 w80 h23 gCopySHA vCopySHA, Copy
+	Gui, Add, Button, x700 y215 w90 h23, CreateSHA1
+	Gui, Add, Button, x800 y215 w90 h23, LoadSHA1
 
-	Gui, Add, Button, x508 y244 w80 h23 gCopySHA2 vCopySHA2, Copy
-	Gui, Add, Button, x598 y244 w90 h23, CreateSHA256
-	Gui, Add, Button, x688 y244 w90 h23, LoadSHA256
+	Gui, Add, Checkbox, x5 y244 w100 h23 Checked vCheckSHA2, SHA-256
+	;Gui, Add, Checkbox, x5 y244 w100 h23 vCheckSHA2, SHA-256
+	Gui, Add, Edit, x115 y244 w490 h23 0x800 vSHA2, 
+	Gui, Add, Button, x610 y244 w80 h23 gCopySHA2 vCopySHA2, Copy
+	Gui, Add, Button, x700 y244 w90 h23, CreateSHA256
+	Gui, Add, Button, x800 y244 w90 h23, LoadSHA256
+
 	Gui, Add, Checkbox, x5 y273 w100 h23 vCheckSHA3, SHA-384
-	Gui, Add, Edit, x115 y273 w390 h23 0x800 vSHA3,
+	Gui, Add, Edit, x115 y273 w490 h23 0x800 vSHA3,
+	Gui, Add, Button, x610 y273 w80 h23 gCopySHA3 vCopySHA3, Copy
+	Gui, Add, Button, x700 y273 w90 h23, CreateSHA384
+	Gui, Add, Button, x800 y273 w90 h23, LoadSHA384
 
-	Gui, Add, Button, x508 y273 w80 h23 gCopySHA3 vCopySHA3, Copy
-	Gui, Add, Button, x598 y273 w90 h23, CreateSHA384
-	Gui, Add, Button, x688 y273 w90 h23, LoadSHA384
 	Gui, Add, Checkbox, x5 y302 w100 h23 vCheckSHA5, SHA-512
-	Gui, Add, Edit, x115 y302 w390 h23 0x800 vSHA5,
-
-	Gui, Add, Button, x508 y302 w80 h23 gCopySHA5 vCopySHA5, Copy
-	Gui, Add, Button, x598 y302 w90 h23, CreateSHA512
-	Gui, Add, Button, x688 y302 w90 h23, LoadSHA512
+	Gui, Add, Edit, x115 y302 w490 h23 0x800 vSHA5,
+	Gui, Add, Button, x610 y302 w80 h23 gCopySHA5 vCopySHA5, Copy
+	Gui, Add, Button, x700 y302 w90 h23, CreateSHA512
+	Gui, Add, Button, x800 y302 w90 h23, LoadSHA512
 
 	Gui, Add, Text, xm y340 w760 h1 0x10
-	Gui, Add, Text, x5 y346 w100 h23 , Verify
+	Gui, Add, Text, x5 y346 w300 h23 , Verify (You must copy paste hash sum here)
+	Gui, Add, Edit, x5 y366 w885 h23 vVerify,			; box with hash result
 
-	Gui, Add, Edit, x5 y366 w680 h23 vVerify,
-	Gui, Add, Edit, x688 y366 w90 h23 0x800 vHashOK,
+	Gui, Add, Text, x730 y395 w90 h33 , Result:
+	Gui, Add, Edit, x800 y395 w80 h20 0x800 vHashOK,		; box say ok or not
 
-	Gui, Add, Button, x598 y394 w90 h23 gloadFile, LoadFile
-	Gui, Add, Button, x688 y394 w90 h23 gClear, Clear
-	Gui, Add, Button, x598 y422 w180 h43 gClose, Close
-	Gui, Add, Checkbox, x5 y400 w350 h23 vReImage checked, Auto-Load highest hash file if exist.
-	Gui, Add, Text, x5 y425 w500 h21 , Made with AHK 2013-%A_YYYY%, jNizM
- and %author% %version%
+	Gui, Add, Button, x610 y394 w90 h23 gloadFile, 3-LoadFile
+	Gui, Add, Button, x610 y435 w90 h23 gClear, Clear
+	Gui, Add, Button, x800 y422 w90 h43 gClose, Close
+	Gui, Add, Checkbox, x5 y395 w300 h23 vReImage checked, Auto-Load highest hash file if exist.
+	Gui, Add, Text, x5 y425 w525 h21 , Made with AHK 2013-%A_YYYY%, jNizM and %author% %version%
 	Gui, Add, Text, x5 y445 w200 h21 , Escape will quit !
 
 	Gui, Add, Text, x250 y445 w150 h21 , Elapsed time :
 	Gui, Add, Text, x375 y445 w50 h21 vDisplayTime, %DisplayTime%
 	Gui, Add, Text, x450 y445 w90 h21 , milliseconds
-
+
 	Gui, Show, AutoSize, %title% %mode% (Files larger than 4 gib take very long time)
 
 	SetTimer, CheckEdit, 100
 	SetTimer, VerifyHash, 200
 	return
-
 
 ;;--- Gui buttons & control ---
 
