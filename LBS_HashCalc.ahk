@@ -4,8 +4,6 @@
 ;;	All files must be in same folder. Where you want.
 ;;	64 bit AHK version : 1.1.24.2 64 bit Unicode
 
-;;	mod and bug tracking
-
 ;;--- Softwares Variables ---
 
 	SetWorkingDir, %A_ScriptDir%
@@ -18,8 +16,11 @@
 	SetEnv, title, LBS_HashCalc
 	SetEnv, name, LBS_HashCalc
 	SetEnv, mode, Verify hash files Creator and load from external file
-	;; SetEnv, version, Version 2021-01-21-2042
-	SetEnv, version, Version %A_YYYY%-%A_MM%-%A_dd%-%A_Hour%%A_Min%	; at compilation the version is autoset
+
+	;;SetEnv, compilever, %A_YYYY%-%A_MM%-%A_dd%-%A_Hour%%A_Min%	; won't work but i work on it
+	;;SetEnv, version, Version %compilever%				; at compilation the version is autoset
+
+	SetEnv, version, Version 2021-01-28-0851
 	SetEnv, Author, LostByteSoft
 	SetEnv, pause, 0
 	SetEnv, debug, 0
@@ -101,10 +102,10 @@ start:
 	Gui, Add, Text, x5 y5 w100 h15 , Data Format:
 
 	Gui, Add, Text, x165 y5 w150 h15 , Path file (Hex, Text) :
-	Gui, Add, Text, x625 y5 w250 h15 , Don't forget: bigger file use more ram.
+	Gui, Add, Text, x615 y5 w275 h15 , Don't forget: bigger file use more ram.
 
 	Gui, Add, DropDownList, x5 y26 AltSubmit vDDL choose1, Text String|Hex|File
-	Gui, Add, Edit, x160 y26 w730 h23  vStr,		; path file lenght
+	Gui, Add, Edit, x160 y26 w730 h23  vStr,					; path file lenght
 	Gui, Add, Checkbox, x5 y55 w100 h23 vCheck, HMAC
 	Gui, Add, Edit, x115 y55 w400 h23 vHMAC,
 
@@ -114,7 +115,8 @@ start:
 	Gui, Add, Button, x700 y55 w90 h43 gFile vFile, 1-File
 	Gui, Add, Button, x800 y55 w90 h43 gCalculate, 2-Calculate
 
-	Gui, Add, Checkbox, x5 y99 w100 h23 Checked vCheckCRC32, CRC32
+	;; Gui, Add, Checkbox, x5 y99 w100 h23 Checked vCheckCRC32, CRC32
+	Gui, Add, Checkbox, x5 y99 w100 h23 vCheckCRC32, CRC32
 	Gui, Add, Edit, x115 y99 w490 h23 0x800 vCRC32, 
 	Gui, Add, Button, x610 y99 w80 h23 gCopyCRC32 vCopyCRC32, Copy
 	Gui, Add, Button, x700 y99 w90 h23, CreateCRC32
@@ -165,12 +167,12 @@ start:
 	Gui, Add, Button, x700 y302 w90 h23, CreateSHA512
 	Gui, Add, Button, x800 y302 w90 h23, LoadSHA512
 
-	Gui, Add, Text, xm y340 w760 h1 0x10
+	Gui, Add, Text, xm y340 w875 h1 0x10							; line
 	Gui, Add, Text, x5 y346 w300 h23 , Verify (You must copy paste hash sum here)
-	Gui, Add, Edit, x5 y366 w885 h23 vVerify,			; box with hash result
+	Gui, Add, Edit, x5 y366 w885 h23 vVerify,						; box with hash result
 
-	Gui, Add, Text, x730 y395 w90 h33 , Result:
-	Gui, Add, Edit, x800 y395 w80 h20 0x800 vHashOK,		; box say ok or not
+	Gui, Add, Text, x730 y398 w90 h33 , Result:
+	Gui, Add, Edit, x800 y394 w90 h23 0x800 vHashOK,					; box say ok or nay (not)
 
 	Gui, Add, Button, x610 y394 w90 h23 gloadFile, 3-LoadFile
 	Gui, Add, Button, x610 y435 w90 h23 gClear, Clear
@@ -194,7 +196,7 @@ start:
 Checkautoload:
 	DisplayTime := A_TickCount - StartTime
 	GuiControl, , DisplayTime, %DisplayTime%
-	;;MsgBox, (Checkautoload) File=%File%
+	IfEqual, debug, 1, MsgBox, (Checkautoload) File=%File%
 	OutputVar := file
 	Test := file
 	SplitPath, Test,, Dir
