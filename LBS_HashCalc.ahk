@@ -20,7 +20,7 @@
 	;;SetEnv, compilever, %A_YYYY%-%A_MM%-%A_dd%-%A_Hour%%A_Min%	; won't work but i work on it
 	;;SetEnv, version, Version %compilever%				; at compilation the version is autoset
 
-	SetEnv, version, Version 2021-01-28-0851
+	SetEnv, version, Version 2021-06-23
 	SetEnv, Author, LostByteSoft
 	SetEnv, pause, 0
 	SetEnv, debug, 0
@@ -33,7 +33,7 @@
 	SetEnv, logoicon, ico_hash.ico
 
 	;; Specific Icons (or files)
-	FileInstall, ico_hash.ico, %icofolder%\ico_hash.ico, 0
+	FileInstall, SharedIcons\ico_hash.ico, %icofolder%\ico_hash.ico, 0
 
 	;; Common ico
 	FileInstall, SharedIcons\ico_about.ico, %icofolder%\ico_about.ico, 0

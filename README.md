@@ -1,5 +1,7 @@
 # HashCalc
 
+Updated: 2021-06-20 to support win 11
+
 THIS IS A FORKED WORK FROM jNizM
 
 ## What is different from the fork work compared to original ?
