@@ -1,5 +1,6 @@
 # HashCalc
 
+Updated: 2025-10-30 some gui text
 Updated: 2021-06-20 to support win 11
 
 THIS IS A FORKED WORK FROM jNizM
@@ -79,6 +80,8 @@ THIS IS A FORKED WORK FROM jNizM
 40 835 bytes LostByteSoft (version 2018-05-11)
 
 41 312 bytes LostByteSoft (version 2021-01-27)
+
+41 600  bytes LostByteSoft (version 2025-10-30)
 
 ## Comparing Versions
 

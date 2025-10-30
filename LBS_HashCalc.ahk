@@ -1,8 +1,9 @@
 ;;--- Head --- Informations --- AHK ---
 
-;;	Compatibility 64 BIT ONLY : Windows Xp , Windows Vista , Windows 7 , Windows 8 , Windows 8.1 ,Windows 10
+;;	Compatibility 64 BIT ONLY : Windows Xp , Windows Vista , Windows 7 , Windows 8 , Windows 8.1 , Windows 10 , Windows 11
 ;;	All files must be in same folder. Where you want.
 ;;	64 bit AHK version : 1.1.24.2 64 bit Unicode
+;;	Update : 2025-10-30-08-26-47
 
 ;;--- Softwares Variables ---
 
@@ -20,7 +21,7 @@
 	;;SetEnv, compilever, %A_YYYY%-%A_MM%-%A_dd%-%A_Hour%%A_Min%	; won't work but i work on it
 	;;SetEnv, version, Version %compilever%				; at compilation the version is autoset
 
-	SetEnv, version, Version 2021-06-23
+	SetEnv, version, Version 2025-10-30
 	SetEnv, Author, LostByteSoft
 	SetEnv, pause, 0
 	SetEnv, debug, 0
@@ -134,8 +135,8 @@ start:
 	Gui, Add, Button, x700 y157 w90 h23, CreateMD4
 	Gui, Add, Button, x800 y157 w90 h23, LoadMD4
 
-	;Gui, Add, Checkbox, x5 y186 w100 h23 Checked vCheckMD5, MD5
-	Gui, Add, Checkbox, x5 y186 w100 h23 vCheckMD5, MD5
+	Gui, Add, Checkbox, x5 y186 w100 h23 Checked vCheckMD5, MD5
+	;Gui, Add, Checkbox, x5 y186 w100 h23 vCheckMD5, MD5
 	Gui, Add, Edit, x115 y186 w490 h23 0x800 vMD5, 
 	Gui, Add, Button, x610 y186 w80 h23 gCopyMD5 vCopyMD5, Copy
 	Gui, Add, Button, x700 y186 w90 h23, CreateMD5
@@ -168,7 +169,7 @@ start:
 	Gui, Add, Button, x800 y302 w90 h23, LoadSHA512
 
 	Gui, Add, Text, xm y340 w875 h1 0x10							; line
-	Gui, Add, Text, x5 y346 w300 h23 , Verify (You must copy paste hash sum here)
+	Gui, Add, Text, x5 y346 w300 h23 , Verify (You must copy paste hash sum here OR click 3-LoadFile)
 	Gui, Add, Edit, x5 y366 w885 h23 vVerify,						; box with hash result
 
 	Gui, Add, Text, x730 y398 w90 h33 , Result:
@@ -177,7 +178,7 @@ start:
 	Gui, Add, Button, x610 y394 w90 h23 gloadFile, 3-LoadFile
 	Gui, Add, Button, x610 y435 w90 h23 gClear, Clear
 	Gui, Add, Button, x800 y422 w90 h43 gClose, Close
-	Gui, Add, Checkbox, x5 y395 w300 h23 vReImage checked, Auto-Load highest hash file if exist.
+	Gui, Add, Checkbox, x5 y395 w600 h23 vReImage checked, Auto-Load highest hash file if exist. (or uncheck this and click 3-LoadFile)
 	Gui, Add, Text, x5 y425 w525 h21 , Made with AHK 2013-%A_YYYY%, jNizM and %author% %version%
 	Gui, Add, Text, x5 y445 w200 h21 , Escape will quit !
 
@@ -1070,34 +1071,36 @@ webpage:
 	run, https://github.com/LostByteSoft/HashCalc
 	Return
 
-;;--- End of script ---
+;; --- End of script ---
+; -------------------------===== Start of eula =====-------------------------
 ;
-;            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
-;   Version 3.14159265358979323846264338327950288419716939937510582
-;                          March 2017
+;	End-user license agreement (eula)
 ;
-; Everyone is permitted to copy and distribute verbatim or modified
-; copies of this license document, and changing it is allowed as long
-; as the name is changed.
+;	JUST DO WHAT THE F*** YOU WANT WITH THE PUBLIC LICENSE
+; 	
+; 	Version 3.1415926532 (January 2022)
+; 	
+; 	TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+;    	
+;	Everyone is permitted to copy and distribute verbatim or modified copies of
+; 	this license document.
+; 	
+; 	As is customary and in compliance with current global and interplanetary
+; 	regulations, the author of these pages disclaims all liability for the
+; 	consequences of the advice given here, in particular in the event of partial
+; 	or total destruction of the material, Loss of rights to the manufacturer
+; 	warranty, electrocution, drowning, divorce, civil war, the effects of radiation
+; 	due to atomic fission, unexpected tax recalls or encounters with
+; 	extraterrestrial beings elsewhere.
+; 	
+; 	YOU MUST ACCEPT THESES TERMS OR NOTHING WILL HAPPEN.
+; 	
+; 	LostByteSoft no copyright or copyleft we are in the center.
+; 	
+; 	You can send your request and your Christmas wishes to this address:
+; 	
+; 		Père Noël
+; 		Pôle Nord, Canada
+; 		H0H 0H0
 ;
-;            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
-;   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
-;
-;              You just DO WHAT THE FUCK YOU WANT TO.
-;
-;		     NO FUCKING WARRANTY AT ALL
-;
-;	As is customary and in compliance with current global and
-;	interplanetary regulations, the author of these pages disclaims
-;	all liability for the consequences of the advice given here,
-;	in particular in the event of partial or total destruction of
-;	the material, Loss of rights to the manufacturer's warranty,
-;	electrocution, drowning, divorce, civil war, the effects of
-;	radiation due to atomic fission, unexpected tax recalls or
-;	    encounters with extraterrestrial beings 'elsewhere.
-;
-;      LostByteSoft no copyright or copyleft we are in the center.
-;
-;	If you are unhappy with this software i do not care.
-;
-;;--- End of file ---
+; -------------------------===== End of file =====-------------------------
